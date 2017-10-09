@@ -17,7 +17,7 @@ int main()
 	my_data_type tmp;
 	for(i=0;i<INLAYERS_T*OUTLAYERS_T*TSIZE_T*TSIZE_T+OUTLAYERS_T;i++)
 	{
-		t_in.write(i+1);vivado hls;
+		t_in.write(i+1);
 		//t_in.write(-i+1);
 	}
 	for(i=0,k=1;i<WIDTH_T*HEIGHT_T;i++)

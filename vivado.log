@@ -1,0 +1,19 @@
+#-----------------------------------------------------------
+# Vivado v2016.4 (64-bit)
+# SW Build 1733598 on Wed Dec 14 22:35:42 MST 2016
+# IP Build 1731160 on Wed Dec 14 23:47:21 MST 2016
+# Start of session at: Thu Sep 28 13:52:02 2017
+# Process ID: 2624
+# Current directory: /home/kotfu/BSCThesis
+# Command line: vivado
+# Log file: /home/kotfu/BSCThesis/vivado.log
+# Journal file: /home/kotfu/BSCThesis/vivado.jou
+#-----------------------------------------------------------
+start_gui
+open_hw
+INFO: [IP_Flow 19-234] Refreshing IP repositories
+INFO: [IP_Flow 19-1704] No user IP repositories specified
+INFO: [IP_Flow 19-2313] Loaded Vivado IP repository '/opt/Xilinx/Vivado/2016.4/data/ip'.
+open_hw: Time (s): cpu = 00:00:06 ; elapsed = 00:00:21 . Memory (MB): peak = 5841.887 ; gain = 87.562 ; free physical = 16929 ; free virtual = 18434
+exit
+INFO: [Common 17-206] Exiting Vivado at Thu Sep 28 13:57:29 2017...
