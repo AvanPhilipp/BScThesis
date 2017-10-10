@@ -1,277 +1,39 @@
 INFO: [HLS 200-10] Running '/opt/Xilinx/Vivado_HLS/2016.4/bin/unwrapped/lnx64.o/vivado_hls'
-INFO: [HLS 200-10] For user 'kotfu' on host 'VLSI-01' (Linux_x86_64 version 3.16.0-77-generic) on Fri Oct 06 14:17:41 CEST 2017
+INFO: [HLS 200-10] For user 'kotfu' on host 'VLSI-01' (Linux_x86_64 version 3.16.0-77-generic) on Tue Oct 10 13:04:11 CEST 2017
 INFO: [HLS 200-10] On os Ubuntu 14.04.5 LTS
 INFO: [HLS 200-10] In directory '/home/kotfu/BSCThesis'
 INFO: [HLS 200-10] Opening project '/home/kotfu/BSCThesis/Conv_net'.
-INFO: [HLS 200-10] Adding design file 'conv.h' to the project
-INFO: [HLS 200-10] Adding design file 'conv.cpp' to the project
-INFO: [HLS 200-10] Adding test bench file 'conv_tb.cpp' to the project
 INFO: [HLS 200-10] Opening solution '/home/kotfu/BSCThesis/Conv_net/Start'.
 INFO: [SYN 201-201] Setting up clock 'default' with a period of 10ns.
 INFO: [HLS 200-10] Setting target device to 'xc7z020clg484-1'
-INFO: [HLS 200-10] Analyzing design file 'conv.cpp' ... 
-INFO: [HLS 200-10] Validating synthesis directives ...
-INFO: [HLS 200-111] Finished Checking Pragmas Time (s): cpu = 00:00:20 ; elapsed = 00:00:10 . Memory (MB): peak = 322.469 ; gain = 12.797 ; free physical = 16117 ; free virtual = 17172
-INFO: [HLS 200-111] Finished Linking Time (s): cpu = 00:00:21 ; elapsed = 00:00:10 . Memory (MB): peak = 322.469 ; gain = 12.797 ; free physical = 16113 ; free virtual = 17172
-INFO: [HLS 200-10] Starting code transformations ...
-INFO: [HLS 200-111] Finished Standard Transforms Time (s): cpu = 00:00:21 ; elapsed = 00:00:11 . Memory (MB): peak = 322.832 ; gain = 13.160 ; free physical = 16102 ; free virtual = 17163
-INFO: [HLS 200-10] Checking synthesizability ...
-INFO: [XFORM 203-602] Inlining function 'ap_uint2float' into 'pool_t<8, 2, 508, 508>' (./conv.h:237) automatically.
-INFO: [XFORM 203-602] Inlining function 'float2ap_uint' into 'pool_t<8, 2, 508, 508>' (./conv.h:255) automatically.
-WARNING: [SYNCHK 200-23] ./conv.h:237: variable-indexed range selection may cause suboptimal QoR.
-INFO: [SYNCHK 200-10] 0 error(s), 1 warning(s).
-INFO: [HLS 200-111] Finished Checking Synthesizability Time (s): cpu = 00:00:22 ; elapsed = 00:00:11 . Memory (MB): peak = 322.832 ; gain = 13.160 ; free physical = 16093 ; free virtual = 17155
-INFO: [XFORM 203-502] Unrolling all sub-loops inside loop 'FOR_WIDTH' (./conv.h:129) in function 'conv_t<8, 8, 3, 508, 508>' for pipelining.
-INFO: [XFORM 203-502] Unrolling all sub-loops inside loop 'FOR_WIDTH' (./conv.h:129) in function 'conv_t<4, 8, 3, 512, 512>' for pipelining.
-INFO: [XFORM 203-501] Unrolling loop 'FOR_IN_LAYERS' (./conv.h:132) in function 'conv_t<8, 8, 3, 508, 508>' completely.
-INFO: [XFORM 203-501] Unrolling loop 'Loop-3.1.1.1' (./conv.h:135) in function 'conv_t<8, 8, 3, 508, 508>' completely.
-INFO: [XFORM 203-501] Unrolling loop 'Loop-3.1.1.1.1' (./conv.h:137) in function 'conv_t<8, 8, 3, 508, 508>' completely.
-INFO: [XFORM 203-501] Unrolling loop 'FOR_MIX' (./conv.h:143) in function 'conv_t<8, 8, 3, 508, 508>' completely.
-INFO: [XFORM 203-501] Unrolling loop 'FOR_MEM' (./conv.h:153) in function 'conv_t<8, 8, 3, 508, 508>' completely.
-INFO: [XFORM 203-501] Unrolling loop 'Loop-3.1.1.4' (./conv.h:160) in function 'conv_t<8, 8, 3, 508, 508>' completely.
-INFO: [XFORM 203-501] Unrolling loop 'Loop-3.1.1.4.1' (./conv.h:162) in function 'conv_t<8, 8, 3, 508, 508>' completely.
-INFO: [XFORM 203-501] Unrolling loop 'FOR_OUT_LAYERS' (./conv.h:165) in function 'conv_t<8, 8, 3, 508, 508>' completely.
-INFO: [XFORM 203-501] Unrolling loop 'Loop-3.1.2' (./conv.h:183) in function 'conv_t<8, 8, 3, 508, 508>' completely.
-INFO: [XFORM 203-501] Unrolling loop 'FOR_IN_LAYERS' (./conv.h:132) in function 'conv_t<4, 8, 3, 512, 512>' completely.
-INFO: [XFORM 203-501] Unrolling loop 'Loop-3.1.1.1' (./conv.h:135) in function 'conv_t<4, 8, 3, 512, 512>' completely.
-INFO: [XFORM 203-501] Unrolling loop 'Loop-3.1.1.1.1' (./conv.h:137) in function 'conv_t<4, 8, 3, 512, 512>' completely.
-INFO: [XFORM 203-501] Unrolling loop 'FOR_MIX' (./conv.h:143) in function 'conv_t<4, 8, 3, 512, 512>' completely.
-INFO: [XFORM 203-501] Unrolling loop 'FOR_MEM' (./conv.h:153) in function 'conv_t<4, 8, 3, 512, 512>' completely.
-INFO: [XFORM 203-501] Unrolling loop 'Loop-3.1.1.4' (./conv.h:160) in function 'conv_t<4, 8, 3, 512, 512>' completely.
-INFO: [XFORM 203-501] Unrolling loop 'Loop-3.1.1.4.1' (./conv.h:162) in function 'conv_t<4, 8, 3, 512, 512>' completely.
-INFO: [XFORM 203-501] Unrolling loop 'FOR_OUT_LAYERS' (./conv.h:165) in function 'conv_t<4, 8, 3, 512, 512>' completely.
-INFO: [XFORM 203-501] Unrolling loop 'Loop-3.1.2' (./conv.h:183) in function 'conv_t<4, 8, 3, 512, 512>' completely.
-INFO: [XFORM 203-102] Partitioning array 'mix' (./conv.h:92) in dimension 1 automatically.
-INFO: [XFORM 203-102] Partitioning array 'memtmp' (./conv.h:98) automatically.
-INFO: [XFORM 203-102] Partitioning array 'mix.0' (./conv.h:92) in dimension 1 automatically.
-INFO: [XFORM 203-102] Partitioning array 'mix.1' (./conv.h:92) in dimension 1 automatically.
-INFO: [XFORM 203-102] Partitioning array 'mix.2' (./conv.h:92) in dimension 1 automatically.
-INFO: [XFORM 203-102] Partitioning array 'mix.3' (./conv.h:92) in dimension 1 automatically.
-INFO: [XFORM 203-102] Partitioning array 'mix.0.0' (./conv.h:92) automatically.
-INFO: [XFORM 203-102] Partitioning array 'mix.0.1' (./conv.h:92) automatically.
-INFO: [XFORM 203-102] Partitioning array 'mix.0.2' (./conv.h:92) automatically.
-INFO: [XFORM 203-102] Partitioning array 'mix.1.0' (./conv.h:92) automatically.
-INFO: [XFORM 203-102] Partitioning array 'mix.1.1' (./conv.h:92) automatically.
-INFO: [XFORM 203-102] Partitioning array 'mix.1.2' (./conv.h:92) automatically.
-INFO: [XFORM 203-102] Partitioning array 'mix.2.0' (./conv.h:92) automatically.
-INFO: [XFORM 203-102] Partitioning array 'mix.2.1' (./conv.h:92) automatically.
-INFO: [XFORM 203-102] Partitioning array 'mix.2.2' (./conv.h:92) automatically.
-INFO: [XFORM 203-102] Partitioning array 'mix.3.0' (./conv.h:92) automatically.
-INFO: [XFORM 203-102] Partitioning array 'mix.3.1' (./conv.h:92) automatically.
-INFO: [XFORM 203-102] Partitioning array 'mix.3.2' (./conv.h:92) automatically.
-INFO: [XFORM 203-102] Partitioning array 'mix' (./conv.h:92) in dimension 1 automatically.
-INFO: [XFORM 203-102] Partitioning array 'memtmp' (./conv.h:98) automatically.
-INFO: [XFORM 203-102] Partitioning array 'mix.0' (./conv.h:92) in dimension 1 automatically.
-INFO: [XFORM 203-102] Partitioning array 'mix.1' (./conv.h:92) in dimension 1 automatically.
-INFO: [XFORM 203-102] Partitioning array 'mix.2' (./conv.h:92) in dimension 1 automatically.
-INFO: [XFORM 203-102] Partitioning array 'mix.3' (./conv.h:92) in dimension 1 automatically.
-INFO: [XFORM 203-102] Partitioning array 'mix.4' (./conv.h:92) in dimension 1 automatically.
-INFO: [XFORM 203-102] Partitioning array 'mix.5' (./conv.h:92) in dimension 1 automatically.
-INFO: [XFORM 203-102] Partitioning array 'mix.6' (./conv.h:92) in dimension 1 automatically.
-INFO: [XFORM 203-102] Partitioning array 'mix.7' (./conv.h:92) in dimension 1 automatically.
-INFO: [XFORM 203-102] Partitioning array 'mix.0.0' (./conv.h:92) automatically.
-INFO: [XFORM 203-102] Partitioning array 'mix.0.1' (./conv.h:92) automatically.
-INFO: [XFORM 203-102] Partitioning array 'mix.0.2' (./conv.h:92) automatically.
-INFO: [XFORM 203-102] Partitioning array 'mix.1.0' (./conv.h:92) automatically.
-INFO: [XFORM 203-102] Partitioning array 'mix.1.1' (./conv.h:92) automatically.
-INFO: [XFORM 203-102] Partitioning array 'mix.1.2' (./conv.h:92) automatically.
-INFO: [XFORM 203-102] Partitioning array 'mix.2.0' (./conv.h:92) automatically.
-INFO: [XFORM 203-102] Partitioning array 'mix.2.1' (./conv.h:92) automatically.
-INFO: [XFORM 203-102] Partitioning array 'mix.2.2' (./conv.h:92) automatically.
-INFO: [XFORM 203-102] Partitioning array 'mix.3.0' (./conv.h:92) automatically.
-INFO: [XFORM 203-102] Partitioning array 'mix.3.1' (./conv.h:92) automatically.
-INFO: [XFORM 203-102] Partitioning array 'mix.3.2' (./conv.h:92) automatically.
-INFO: [XFORM 203-102] Partitioning array 'mix.4.0' (./conv.h:92) automatically.
-INFO: [XFORM 203-102] Partitioning array 'mix.4.1' (./conv.h:92) automatically.
-INFO: [XFORM 203-102] Partitioning array 'mix.4.2' (./conv.h:92) automatically.
-INFO: [XFORM 203-102] Partitioning array 'mix.5.0' (./conv.h:92) automatically.
-INFO: [XFORM 203-102] Partitioning array 'mix.5.1' (./conv.h:92) automatically.
-INFO: [XFORM 203-102] Partitioning array 'mix.5.2' (./conv.h:92) automatically.
-INFO: [XFORM 203-102] Partitioning array 'mix.6.0' (./conv.h:92) automatically.
-INFO: [XFORM 203-102] Partitioning array 'mix.6.1' (./conv.h:92) automatically.
-INFO: [XFORM 203-102] Partitioning array 'mix.6.2' (./conv.h:92) automatically.
-INFO: [XFORM 203-102] Partitioning array 'mix.7.0' (./conv.h:92) automatically.
-INFO: [XFORM 203-102] Partitioning array 'mix.7.1' (./conv.h:92) automatically.
-INFO: [XFORM 203-102] Partitioning array 'mix.7.2' (./conv.h:92) automatically.
-INFO: [XFORM 203-602] Inlining function 'ap_uint2float' into 'pool_t<8, 2, 508, 508>' (./conv.h:237) automatically.
-INFO: [XFORM 203-602] Inlining function 'float2ap_uint' into 'pool_t<8, 2, 508, 508>' (./conv.h:255) automatically.
-INFO: [XFORM 203-712] Applying dataflow to function 'conv' (conv.cpp:8), detected/extracted 3 process function(s):
-	 'conv_t<4, 8, 3, 512, 512>'
-	 'conv_t<8, 8, 3, 508, 508>'
-	 'pool_t<8, 2, 508, 508>'.
-INFO: [XFORM 203-401] Performing if-conversion on hyperblock from (./conv.h:275:4) to (./conv.h:228:43) in function 'pool_t<8, 2, 508, 508>'... converting 6 basic blocks.
-INFO: [XFORM 203-11] Balancing expressions in function 'conv_t<8, 8, 3, 508, 508>' (./conv.h:84)...1136 expression(s) balanced.
-INFO: [XFORM 203-11] Balancing expressions in function 'conv_t<4, 8, 3, 512, 512>' (./conv.h:84)...560 expression(s) balanced.
-INFO: [HLS 200-111] Finished Pre-synthesis Time (s): cpu = 00:00:31 ; elapsed = 00:00:21 . Memory (MB): peak = 450.465 ; gain = 140.793 ; free physical = 16062 ; free virtual = 17121
-INFO: [XFORM 203-541] Flattening a loop nest 'TLOAD2' (./conv.h:111:6) in function 'conv_t<8, 8, 3, 508, 508>'.
-INFO: [XFORM 203-541] Flattening a loop nest 'TLOAD3' (./conv.h:109:5) in function 'conv_t<8, 8, 3, 508, 508>'.
-INFO: [XFORM 203-541] Flattening a loop nest 'TLOAD5' (./conv.h:107:4) in function 'conv_t<8, 8, 3, 508, 508>'.
-INFO: [XFORM 203-541] Flattening a loop nest 'FOR_HEIGHT' (./conv.h:127:3) in function 'conv_t<8, 8, 3, 508, 508>'.
-INFO: [XFORM 203-541] Flattening a loop nest 'TLOAD2' (./conv.h:111:6) in function 'conv_t<4, 8, 3, 512, 512>'.
-INFO: [XFORM 203-541] Flattening a loop nest 'TLOAD3' (./conv.h:109:5) in function 'conv_t<4, 8, 3, 512, 512>'.
-INFO: [XFORM 203-541] Flattening a loop nest 'TLOAD5' (./conv.h:107:4) in function 'conv_t<4, 8, 3, 512, 512>'.
-INFO: [XFORM 203-541] Flattening a loop nest 'FOR_HEIGHT' (./conv.h:127:3) in function 'conv_t<4, 8, 3, 512, 512>'.
-WARNING: [XFORM 203-631] Renaming function 'conv_t<4, 8, 3, 512, 512>' (./conv.h:91:32) into conv_t.
-WARNING: [XFORM 203-631] Renaming function 'pool_t<8, 2, 508, 508>' (./conv.h:219:6) into pool_t.
-WARNING: [XFORM 203-631] Renaming function 'conv_t<8, 8, 3, 508, 508>' (./conv.h:91:32) into conv_t.1.
-INFO: [HLS 200-111] Finished Architecture Synthesis Time (s): cpu = 00:00:40 ; elapsed = 00:00:30 . Memory (MB): peak = 514.465 ; gain = 204.793 ; free physical = 16016 ; free virtual = 17077
-INFO: [HLS 200-10] Starting hardware synthesis ...
-INFO: [HLS 200-10] Synthesizing 'conv' ...
-WARNING: [SYN 201-103] Legalizing function name 'conv_t.1' to 'conv_t_1'.
-INFO: [HLS 200-10] ----------------------------------------------------------------
-INFO: [HLS 200-10] -- Implementing module 'conv_t' 
-INFO: [HLS 200-10] ----------------------------------------------------------------
-INFO: [SCHED 204-11] Starting scheduling ...
-INFO: [SCHED 204-61] Pipelining loop 'TLOAD5_TLOAD2_TLOAD1'.
-INFO: [SCHED 204-61] Pipelining result: Target II: 1, Final II: 1, Depth: 3.
-INFO: [SCHED 204-61] Pipelining loop 'FOR_HEIGHT_FOR_WIDTH'.
-WARNING: [SCHED 204-68] Unable to enforce a carried dependence constraint (II = 1, distance = 1, offset = 1)
-   between 'store' operation (./conv.h:155) of variable 'mix[0][1][2]', ./conv.h:144 on array 'mem', ./conv.h:91 and 'load' operation ('mix[0][0][2]', ./conv.h:144) on array 'mem', ./conv.h:91.
-WARNING: [SCHED 204-68] Unable to enforce a carried dependence constraint (II = 2, distance = 1, offset = 1)
-   between 'store' operation (./conv.h:155) of variable 'mix[1][1][2]', ./conv.h:144 on array 'mem', ./conv.h:91 and 'load' operation ('mix[0][0][2]', ./conv.h:144) on array 'mem', ./conv.h:91.
-WARNING: [SCHED 204-68] Unable to enforce a carried dependence constraint (II = 3, distance = 1, offset = 1)
-   between 'store' operation (./conv.h:155) of variable 'mix[1][1][2]', ./conv.h:144 on array 'mem', ./conv.h:91 and 'load' operation ('mix[0][0][2]', ./conv.h:144) on array 'mem', ./conv.h:91.
-WARNING: [SCHED 204-68] Unable to enforce a carried dependence constraint (II = 4, distance = 1, offset = 1)
-   between 'store' operation (./conv.h:155) of variable 'mix[2][1][2]', ./conv.h:144 on array 'mem', ./conv.h:91 and 'load' operation ('mix[0][0][2]', ./conv.h:144) on array 'mem', ./conv.h:91.
-WARNING: [SCHED 204-69] Unable to schedule 'load' operation ('tmem_load_755', ./conv.h:169) on array 'tmem', ./conv.h:94 due to limited memory ports.
-INFO: [SCHED 204-61] Pipelining result: Target II: 1, Final II: 144, Depth: 148.
-INFO: [SCHED 204-11] Finished scheduling.
-INFO: [HLS 200-111]  Elapsed time: 34.12 seconds; current allocated memory: 147.446 MB.
-INFO: [BIND 205-100] Starting micro-architecture generation ...
-INFO: [BIND 205-101] Performing variable lifetime analysis.
-INFO: [BIND 205-101] Exploring resource sharing.
-INFO: [BIND 205-101] Binding ...
-INFO: [BIND 205-100] Finished micro-architecture generation.
-INFO: [HLS 200-111]  Elapsed time: 2.85 seconds; current allocated memory: 154.917 MB.
-INFO: [HLS 200-10] ----------------------------------------------------------------
-INFO: [HLS 200-10] -- Implementing module 'conv_t_1' 
-INFO: [HLS 200-10] ----------------------------------------------------------------
-INFO: [SCHED 204-11] Starting scheduling ...
-INFO: [SCHED 204-61] Pipelining loop 'TLOAD5_TLOAD2_TLOAD1'.
-INFO: [SCHED 204-61] Pipelining result: Target II: 1, Final II: 1, Depth: 3.
-INFO: [SCHED 204-61] Pipelining loop 'FOR_HEIGHT_FOR_WIDTH'.
-WARNING: [SCHED 204-68] Unable to enforce a carried dependence constraint (II = 1, distance = 1, offset = 1)
-   between 'store' operation (./conv.h:155) of variable 'mix[0][1][2]', ./conv.h:144 on array 'mem', ./conv.h:91 and 'load' operation ('mix[0][0][2]', ./conv.h:144) on array 'mem', ./conv.h:91.
-WARNING: [SCHED 204-68] Unable to enforce a carried dependence constraint (II = 2, distance = 1, offset = 1)
-   between 'store' operation (./conv.h:155) of variable 'mix[1][1][2]', ./conv.h:144 on array 'mem', ./conv.h:91 and 'load' operation ('mix[0][0][2]', ./conv.h:144) on array 'mem', ./conv.h:91.
-WARNING: [SCHED 204-68] Unable to enforce a carried dependence constraint (II = 3, distance = 1, offset = 1)
-   between 'store' operation (./conv.h:155) of variable 'mix[1][1][2]', ./conv.h:144 on array 'mem', ./conv.h:91 and 'load' operation ('mix[0][0][2]', ./conv.h:144) on array 'mem', ./conv.h:91.
-WARNING: [SCHED 204-68] Unable to enforce a carried dependence constraint (II = 4, distance = 1, offset = 1)
-   between 'store' operation (./conv.h:155) of variable 'mix[2][1][2]', ./conv.h:144 on array 'mem', ./conv.h:91 and 'load' operation ('mix[0][0][2]', ./conv.h:144) on array 'mem', ./conv.h:91.
-WARNING: [SCHED 204-69] Unable to schedule 'load' operation ('tmem_load_260', ./conv.h:169) on array 'tmem', ./conv.h:94 due to limited memory ports.
-INFO: [SCHED 204-61] Unable to satisfy pipeline directive: Unable to pipeline the region.
-INFO: [SCHED 204-11] Finished scheduling.
-INFO: [HLS 200-111]  Elapsed time: 16 seconds; current allocated memory: 167.250 MB.
-INFO: [BIND 205-100] Starting micro-architecture generation ...
-INFO: [BIND 205-101] Performing variable lifetime analysis.
-INFO: [BIND 205-101] Exploring resource sharing.
-INFO: [BIND 205-101] Binding ...
-INFO: [BIND 205-100] Finished micro-architecture generation.
-INFO: [HLS 200-111]  Elapsed time: 8.75 seconds; current allocated memory: 181.091 MB.
-INFO: [HLS 200-10] ----------------------------------------------------------------
-INFO: [HLS 200-10] -- Implementing module 'pool_t' 
-INFO: [HLS 200-10] ----------------------------------------------------------------
-INFO: [SCHED 204-11] Starting scheduling ...
-INFO: [SCHED 204-11] Finished scheduling.
-INFO: [HLS 200-111]  Elapsed time: 2.67 seconds; current allocated memory: 181.947 MB.
-INFO: [BIND 205-100] Starting micro-architecture generation ...
-INFO: [BIND 205-101] Performing variable lifetime analysis.
-INFO: [BIND 205-101] Exploring resource sharing.
-INFO: [BIND 205-101] Binding ...
-INFO: [BIND 205-100] Finished micro-architecture generation.
-INFO: [HLS 200-111]  Elapsed time: 0.11 seconds; current allocated memory: 182.533 MB.
-INFO: [HLS 200-10] ----------------------------------------------------------------
-INFO: [HLS 200-10] -- Implementing module 'conv' 
-INFO: [HLS 200-10] ----------------------------------------------------------------
-INFO: [SCHED 204-11] Starting scheduling ...
-INFO: [SCHED 204-11] Finished scheduling.
-INFO: [HLS 200-111]  Elapsed time: 0.14 seconds; current allocated memory: 182.817 MB.
-INFO: [BIND 205-100] Starting micro-architecture generation ...
-INFO: [BIND 205-101] Performing variable lifetime analysis.
-INFO: [BIND 205-101] Exploring resource sharing.
-INFO: [BIND 205-101] Binding ...
-INFO: [BIND 205-100] Finished micro-architecture generation.
-INFO: [HLS 200-111]  Elapsed time: 1 seconds; current allocated memory: 183.503 MB.
-INFO: [HLS 200-10] ----------------------------------------------------------------
-INFO: [HLS 200-10] -- Generating RTL for module 'conv_t' 
-INFO: [HLS 200-10] ----------------------------------------------------------------
-INFO: [SYN 201-210] Renamed object name 'conv_mul_mul_16s_16s_16_1' to 'conv_mul_mul_16s_bkb' due to the length limit 20
-INFO: [RTGEN 206-100] Generating core module 'conv_mul_mul_16s_bkb': 2 instance(s).
-INFO: [RTGEN 206-100] Finished creating RTL model for 'conv_t'.
-INFO: [HLS 200-111]  Elapsed time: 2.55 seconds; current allocated memory: 195.071 MB.
-INFO: [HLS 200-10] ----------------------------------------------------------------
-INFO: [HLS 200-10] -- Generating RTL for module 'conv_t_1' 
-INFO: [HLS 200-10] ----------------------------------------------------------------
-WARNING: [RTGEN 206-101] RTL name 'conv_mul_mul_16s_bkb' is changed to 'conv_mul_mul_16s_bkb_x' due to conflict.
-INFO: [RTGEN 206-100] Generating core module 'conv_mul_mul_16s_bkb': 20 instance(s).
-INFO: [RTGEN 206-100] Finished creating RTL model for 'conv_t_1'.
-INFO: [HLS 200-111]  Elapsed time: 11.22 seconds; current allocated memory: 240.053 MB.
-INFO: [HLS 200-10] ----------------------------------------------------------------
-INFO: [HLS 200-10] -- Generating RTL for module 'pool_t' 
-INFO: [HLS 200-10] ----------------------------------------------------------------
-INFO: [RTGEN 206-100] Finished creating RTL model for 'pool_t'.
-INFO: [HLS 200-111]  Elapsed time: 4.65 seconds; current allocated memory: 290.003 MB.
-INFO: [HLS 200-10] ----------------------------------------------------------------
-INFO: [HLS 200-10] -- Generating RTL for module 'conv' 
-INFO: [HLS 200-10] ----------------------------------------------------------------
-INFO: [RTGEN 206-500] Setting interface mode on port 'conv/x_in_V_data_V' to 'axis' (register, both mode).
-INFO: [RTGEN 206-500] Setting interface mode on port 'conv/x_in_V_keep_V' to 'axis' (register, both mode).
-INFO: [RTGEN 206-500] Setting interface mode on port 'conv/x_in_V_strb_V' to 'axis' (register, both mode).
-INFO: [RTGEN 206-500] Setting interface mode on port 'conv/x_in_V_user_V' to 'axis' (register, both mode).
-INFO: [RTGEN 206-500] Setting interface mode on port 'conv/x_in_V_last_V' to 'axis' (register, both mode).
-INFO: [RTGEN 206-500] Setting interface mode on port 'conv/x_in_V_id_V' to 'axis' (register, both mode).
-INFO: [RTGEN 206-500] Setting interface mode on port 'conv/x_in_V_dest_V' to 'axis' (register, both mode).
-INFO: [RTGEN 206-500] Setting interface mode on port 'conv/x_out_V_data_V' to 'axis' (register, both mode).
-INFO: [RTGEN 206-500] Setting interface mode on port 'conv/x_out_V_keep_V' to 'axis' (register, both mode).
-INFO: [RTGEN 206-500] Setting interface mode on port 'conv/x_out_V_strb_V' to 'axis' (register, both mode).
-INFO: [RTGEN 206-500] Setting interface mode on port 'conv/x_out_V_user_V' to 'axis' (register, both mode).
-INFO: [RTGEN 206-500] Setting interface mode on port 'conv/x_out_V_last_V' to 'axis' (register, both mode).
-INFO: [RTGEN 206-500] Setting interface mode on port 'conv/x_out_V_id_V' to 'axis' (register, both mode).
-INFO: [RTGEN 206-500] Setting interface mode on port 'conv/x_out_V_dest_V' to 'axis' (register, both mode).
-INFO: [RTGEN 206-500] Setting interface mode on port 'conv/t_in1_V' to 'axis' (register, both mode).
-INFO: [RTGEN 206-500] Setting interface mode on port 'conv/t_in2_V' to 'axis' (register, both mode).
-INFO: [RTGEN 206-500] Setting interface mode on port 'conv/tload' to 's_axilite & ap_none'.
-INFO: [RTGEN 206-500] Setting interface mode on function 'conv' to 's_axilite & ap_ctrl_hs'.
-INFO: [RTGEN 206-100] Bundling port 'return' and 'tload' to AXI-Lite port AXILiteS.
-INFO: [SYN 201-210] Renamed object name 'conv_Layer1_tmp_out_V_dat' to 'conv_Layer1_tmp_ocud' due to the length limit 20
-INFO: [SYN 201-210] Renamed object name 'conv_Layer1_tmp_out_V_kee' to 'conv_Layer1_tmp_odEe' due to the length limit 20
-INFO: [SYN 201-210] Renamed object name 'conv_Layer1_tmp_out_V_str' to 'conv_Layer1_tmp_oeOg' due to the length limit 20
-INFO: [SYN 201-210] Renamed object name 'conv_Layer1_tmp_out_V_use' to 'conv_Layer1_tmp_ofYi' due to the length limit 20
-INFO: [SYN 201-210] Renamed object name 'conv_Layer1_tmp_out_V_las' to 'conv_Layer1_tmp_og8j' due to the length limit 20
-INFO: [SYN 201-210] Renamed object name 'conv_Layer1_tmp_out_V_id_s' to 'conv_Layer1_tmp_ohbi' due to the length limit 20
-INFO: [SYN 201-210] Renamed object name 'conv_Layer1_tmp_out_V_des' to 'conv_Layer1_tmp_oibs' due to the length limit 20
-INFO: [SYN 201-210] Renamed object name 'conv_Layer2_tmp_out_V_dat' to 'conv_Layer2_tmp_ojbC' due to the length limit 20
-INFO: [SYN 201-210] Renamed object name 'conv_Layer2_tmp_out_V_kee' to 'conv_Layer2_tmp_okbM' due to the length limit 20
-INFO: [SYN 201-210] Renamed object name 'conv_Layer2_tmp_out_V_str' to 'conv_Layer2_tmp_olbW' due to the length limit 20
-INFO: [SYN 201-210] Renamed object name 'conv_Layer2_tmp_out_V_use' to 'conv_Layer2_tmp_omb6' due to the length limit 20
-INFO: [SYN 201-210] Renamed object name 'conv_Layer2_tmp_out_V_las' to 'conv_Layer2_tmp_oncg' due to the length limit 20
-INFO: [SYN 201-210] Renamed object name 'conv_Layer2_tmp_out_V_id_s' to 'conv_Layer2_tmp_oocq' due to the length limit 20
-INFO: [SYN 201-210] Renamed object name 'conv_Layer2_tmp_out_V_des' to 'conv_Layer2_tmp_opcA' due to the length limit 20
-INFO: [RTGEN 206-100] Finished creating RTL model for 'conv'.
-INFO: [HLS 200-111]  Elapsed time: 0.34 seconds; current allocated memory: 293.201 MB.
-INFO: [RTMG 210-278] Implementing memory 'conv_t_mem_ram' using block RAMs.
-INFO: [RTMG 210-278] Implementing memory 'conv_t_tmem_ram' using block RAMs.
-INFO: [RTMG 210-278] Implementing memory 'conv_t_1_mem_ram' using block RAMs.
-INFO: [RTMG 210-278] Implementing memory 'conv_t_1_tmem_ram' using block RAMs.
-INFO: [RTMG 210-278] Implementing memory 'pool_t_mem_ram' using block RAMs.
-INFO: [RTMG 210-278] Implementing memory 'pool_t_tmp_max_ram' using distributed RAMs.
-INFO: [RTMG 210-285] Implementing FIFO 'conv_Layer1_tmp_ocud' using Shift Registers.
-INFO: [RTMG 210-285] Implementing FIFO 'conv_Layer1_tmp_odEe' using Shift Registers.
-INFO: [RTMG 210-285] Implementing FIFO 'conv_Layer1_tmp_oeOg' using Shift Registers.
-INFO: [RTMG 210-285] Implementing FIFO 'conv_Layer1_tmp_ofYi' using Shift Registers.
-INFO: [RTMG 210-285] Implementing FIFO 'conv_Layer1_tmp_og8j' using Shift Registers.
-INFO: [RTMG 210-285] Implementing FIFO 'conv_Layer1_tmp_ohbi' using Shift Registers.
-INFO: [RTMG 210-285] Implementing FIFO 'conv_Layer1_tmp_oibs' using Shift Registers.
-INFO: [RTMG 210-285] Implementing FIFO 'conv_Layer2_tmp_ojbC' using Shift Registers.
-INFO: [RTMG 210-285] Implementing FIFO 'conv_Layer2_tmp_okbM' using Shift Registers.
-INFO: [RTMG 210-285] Implementing FIFO 'conv_Layer2_tmp_olbW' using Shift Registers.
-INFO: [RTMG 210-285] Implementing FIFO 'conv_Layer2_tmp_omb6' using Shift Registers.
-INFO: [RTMG 210-285] Implementing FIFO 'conv_Layer2_tmp_oncg' using Shift Registers.
-INFO: [RTMG 210-285] Implementing FIFO 'conv_Layer2_tmp_oocq' using Shift Registers.
-INFO: [RTMG 210-285] Implementing FIFO 'conv_Layer2_tmp_opcA' using Shift Registers.
-INFO: [RTMG 210-285] Implementing FIFO 'start_for_pool_t_U0' using Shift Registers.
-INFO: [HLS 200-111] Finished generating all RTL models Time (s): cpu = 00:01:33 ; elapsed = 00:01:27 . Memory (MB): peak = 664.938 ; gain = 355.266 ; free physical = 15782 ; free virtual = 16909
-INFO: [SYSC 207-301] Generating SystemC RTL for conv.
-INFO: [VHDL 208-304] Generating VHDL RTL for conv.
-INFO: [VLOG 209-307] Generating Verilog RTL for conv.
-INFO: [HLS 200-112] Total elapsed time: 87.23 seconds; peak allocated memory: 293.201 MB.
+INFO: [SIM 211-2] *************** CSIM start ***************
+INFO: [SIM 211-4] CSIM will launch GCC as the compiler.
+   Compiling ../../../../conv_tb.cpp in debug mode
+   Compiling ../../../../conv.cpp in debug mode
+../../../../conv.cpp: In function ‘void network(my_data_type&, my_data_type&)’:
+../../../../conv.cpp:43:57: error: no matching function for call to ‘convolution_template(my_data_type*, my_data_type [784])’
+../../../../conv.cpp:43:57: note: candidate is:
+../../../../conv.h:314:84: note: template<int IN_WIDTH, int IN_HEIGHT, int IN_DEPTH, int TEMPLATE_SIZE> void convolution_template(hls::stream<short int [IN_DEPTH]>&, hls::stream<short int [IN_DEPTH]>&, hls::stream<short int [IN_DEPTH]>&, hls::stream<short int [IN_DEPTH]>&)
+../../../../conv.cpp:46:54: error: no matching function for call to ‘pooling_template(my_data_type [784], my_data_type [784])’
+../../../../conv.cpp:46:54: note: candidate is:
+../../../../conv.h:364:79: note: template<int IN_WIDTH, int IN_HEIGHT, int IN_DEPTH, int POOL_SIZE> void pooling_template(hls::stream<short int [IN_DEPTH]>&, hls::stream<short int [IN_DEPTH]>&)
+../../../../conv.cpp:49:45: error: no matching function for call to ‘relu_template(my_data_type [784], my_data_type [784])’
+../../../../conv.cpp:49:45: note: candidate is:
+../../../../conv.h:420:32: note: template<int SIZE> void relu_template(hls::stream<short int>&, hls::stream<short int>&)
+../../../../conv.cpp:51:65: error: no matching function for call to ‘fully_connected_template(my_data_type [784], my_data_type*)’
+../../../../conv.cpp:51:65: note: candidate is:
+../../../../conv.h:398:49: note: template<int IN_SIZE, int OUT_SIZE> void fully_connected_template(hls::stream<short int>&, hls::stream<short int>&)
+make: *** [obj/conv.o] Error 1
+ERROR: [SIM 211-100] CSim file generation failed: compilation error(s).
+INFO: [SIM 211-3] *************** CSIM finish ***************
+5
+    while executing
+"source /home/kotfu/BSCThesis/Conv_net/Start/csim.tcl"
+    invoked from within
+"hls::main /home/kotfu/BSCThesis/Conv_net/Start/csim.tcl"
+    ("uplevel" body line 1)
+    invoked from within
+"uplevel 1 hls::main {*}$args"
+    (procedure "hls_proc" line 5)
+    invoked from within
+"hls_proc $argv"

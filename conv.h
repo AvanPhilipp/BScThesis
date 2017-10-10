@@ -57,10 +57,23 @@ void conv_alt(
 void pool(
 		hls::stream<ap_axiu<1*sizeof(my_data_type)*8,1,1,1> > &x_in, hls::stream<ap_axiu<1*sizeof(my_data_type)*8,1,1,1> > &x_out);
 
-void convolution_template(my_data_type input[],my_data_type output[]);
-void fully_connected_template(my_data_type input[], my_data_type output[]);
-void relu_template(my_data_type input[], my_data_type output[]);
-void pooling_template(my_data_type input[], my_data_type output[]);
+void convolution_template(
+		hls::stream< my_data_type[] > &input,
+		hls::stream< my_data_type[] > &output,
+		hls::stream< my_templ_type[] > &templ,
+		hls::stream< my_templ_type[] > &templ_b);
+
+void pooling_template(
+		hls::stream< my_data_type [] > &input,
+		hls::stream< my_data_type []> &output);
+
+void fully_connected_template(
+		hls::stream<my_data_type> &input,
+		hls::stream<my_data_type> &output);
+
+void relu_template(
+		hls::stream< my_data_type > &input,
+		hls::stream< my_data_type > &output);
 
 inline ap_uint<sizeof(my_data_type)*8> float2ap_uint(
 		my_data_type data)
@@ -311,92 +324,123 @@ template<int LAYERS, int TSIZE, int WIDTH, int HEIGHT> inline void pool_t(
 	}
 }
 
-template<int IN_WIDTH, int IN_HEIGHT, int IN_DEPTH,int OUT_WIDTH, int OUT_HEIGHT, int TEMPLATE_SIZE> inline void convolution_template(
-		//hls::stream<ap_uint< sizeof(my_data_type)*8*IN_DEPTH> >input,  // ez biztos hogy jó. próbáljuk ki tömbbel...
+template<int IN_WIDTH, int IN_HEIGHT, int IN_DEPTH, int TEMPLATE_SIZE> inline void convolution_template(
+		//hls::stream<ap_uint< sizeof(my_data_typemy_data_type)*8*IN_DEPTH> >input,  // ez biztos hogy jó. próbáljuk ki tömbbel...
 		hls::stream< my_data_type[IN_DEPTH] > &input,
-		hls::stream< my_data_type[IN_DEPTH] > &output)
+		hls::stream< my_data_type[IN_DEPTH] > &output,
+		hls::stream< my_templ_type[IN_DEPTH] > &templ,
+		hls::stream< my_templ_type[IN_DEPTH] > &templ_b)
 {
 	my_data_type image[IN_WIDTH][TEMPLATE_SIZE-1][IN_DEPTH]; //teljes két sort tartalmazza
-	//mixer = input.read();  // 3x3 számoló külön
-	//input_register //következő betöltött érték
+	my_data_type image_register = templ.read();
+	//my_data_type mixer[TEMPLATE_SIZE][TEMPLATE_SIZE][IN_DEPTH];
 
 	my_data_type weigts[TEMPLATE_SIZE][TEMPLATE_SIZE][IN_DEPTH];
-	my_data_type bias;
+	my_data_type bias[IN_DEPTH] = templ_b.read();
 
+	int actual=0;
+/// ellenőrizni kellene hogy mindent jó helyről szedek-e...
 	FOR_IN_HEIGHT: for (int i = 0; i < IN_HEIGHT; i++) {
 		FOR_IN_WIDTH: for (int j = 0; j < IN_WIDTH; j++) {
-			image[j][i] = input.read();
-			///szorzás
-			output.write(/*szorzás értéke*/);
-		}
-	}
 
-
-}
-
-template<int IN_WIDTH, int IN_HEIGHT, int IN_DEPTH, int OUT_WIDTH, int OUT_HEIGHT, int TEMPLATE_SIZE>inline void pooling_template(
-		my_data_type input[IN_WIDTH][IN_HEIGHT][IN_DEPTH],
-		my_data_type output[OUT_WIDTH][OUT_HEIGHT][IN_DEPTH])
-{
-
-	FOR_IN_HEIGHT: for (int i = 0; i < IN_HEIGHT; i++) {
-		FOR_IN_WIDTH: for (int j = 0; j < IN_WIDTH; j++) {
-			FOR_IN_DEPTH: for(int k=0;k<IN_DEPTH;k++){
-				my_data_type temp[] = {
-						input[j][i][k],
-						input[j+1][i][k],
-						input[j][i+1][k],
-						input[j+1][i+1][k],
-						input[j][i][k+1],
-						input[j+1][i][k+1],
-						input[j][i+1][k+1],
-						input[j+1][i+1][k+1],
-				};
-				my_data_type max = 0;
-				for(int t = 0; t<6; t++){
-					if(temp[t]>max)max=temp[t];
+			for(int i=0; i<TEMPLATE_SIZE;i++){
+				for(int j=0; j<TEMPLATE_SIZE-1;j++){
+					for(int h=0;h<IN_DEPTH;h++){
+						weigts[i][j][h] = weigts[i][j+1][h];
+					}
+				}
+				for(int j=0;j<TEMPLATE_SIZE;j++){
+					weigts[i][j][TEMPLATE_SIZE-1] = image[i][actual][TEMPLATE_SIZE-1];
 				}
 			}
+			for(int i=0;i<TEMPLATE_SIZE-1;i++){
+				for(int h=0;h<IN_DEPTH;h++){
+					image[0][i][h] = weigts[TEMPLATE_SIZE-1][i][h];
+				}
+			}
+
+			//template és a környezet betöltve. Most kell a szorzást számolni
+			for(int i=0; i<TEMPLATE_SIZE;i++){
+				for(int j=0; j<TEMPLATE_SIZE-1;j++){
+					for(int h=0;h<IN_DEPTH;h++){
+						my_data_type temp_out;
+						temp_out = weigts[i][j][h] * image[i][j][h] + bias[h];
+						output.write(temp_out);
+					}
+				}
+			}
+
 		}
 	}
-	OUTPUT_LOAD: ;
+}
+
+template<int IN_WIDTH, int IN_HEIGHT, int IN_DEPTH, int POOL_SIZE>inline void pooling_template(
+		hls::stream< my_data_type [IN_DEPTH] > &input,
+		hls::stream< my_data_type [IN_DEPTH]> &output)
+{
+	my_data_type image[IN_WIDTH][POOL_SIZE-1][IN_DEPTH];
+	my_data_type window[POOL_SIZE][POOL_SIZE][IN_DEPTH];
+
+	FOR_IN_HEIGHT: for (int i = 0; i<IN_HEIGHT; i++) {
+		FOR_IN_WIDTH: for (int j = 0; j<IN_WIDTH; j++) {
+
+			for(int p=0;p<POOL_SIZE-1;p++){
+				image[0][p] = window[i][p];
+				window[i][p] = window[i][p+1];
+			}
+
+			image[IN_WIDTH][POOL_SIZE-1] = input.read();
+
+			my_data_type max = 0;
+			for(int i=0;i<POOL_SIZE;i++){
+				for(int j=0;j<POOL_SIZE;j++){
+					for(int h=0;h<IN_DEPTH;h++){
+						if(window[i][j][h]>max){
+							max = window[i][j][h];
+						}
+					}
+				}
+			}
+
+			output.write(max);
+		}
+	}
 }
 
 
 template<int IN_SIZE, int OUT_SIZE> inline void fully_connected_template(
-		my_data_type input[IN_SIZE],
-		my_data_type output[OUT_SIZE])
+		hls::stream<my_data_type> &input,
+		hls::stream<my_data_type> &output)
 {
-	my_templ_type weights[IN_SIZE][IN_SIZE];
-	my_templ_type bias[IN_SIZE];
+	my_templ_type weights[IN_SIZE][OUT_SIZE];
+	my_templ_type bias[OUT_SIZE];
 
 	// Minden kimenetre ad valami értéket.
 	for(int o = 0; o<OUT_SIZE;o++){
 
-		// Minden neuronon végigmegy
-		for(int i=0;i<IN_SIZE;i++){
+			// Minden neuronnak minden bemenetén végigmegy
+			for(int i =0;i<IN_SIZE;i++){
 
-			// Minden bemenetén minden neuronnak végigmegy
-			for(int j =0;j<IN_SIZE;j++){
-
-				// A kimenetet számolja
-				output[o]= input[i]*weights[i][j] + bias[j];
+				my_data_type temp_out;
+				temp_out = input.read()*weights[i][o] + bias[i];
+				output.write(temp_out);
 			}
 		}
 	}
-}
+
 
 // ReLu réteg a nagyobb modulatitás elérés érdekében... (jobban megértettem a működést.)
 template<int SIZE> inline void relu_template(
-	my_data_type input[SIZE],
-	my_data_type output[SIZE])
+	hls::stream< my_data_type > &input,
+	hls::stream< my_data_type > &output)
 {
 	FOR_INPUTS : for(int i =0;i<SIZE;i++){
-		if(input[i] < 0){
-			output[i]= 0;
+		my_data_type temp = input.read();
+		if(temp < 0){
+			output.write(0);
 		}
 		else{
-			output[i]=input[i];
+			output.write(temp);
 		}
 	}
 }

@@ -36,18 +36,17 @@ void pool(hls::stream<ap_axiu<8*sizeof(my_data_type)*8,1,1,1> > &x_in, hls::stre
 }
 
 
-/**
-void network (my_data_type &input, my_data_type &output)
+
+void network (hls::stream< my_data_type[1] > &input, my_data_type &output)
 {
-	Data temp_1 = new Data(28);
-	layer_1: convolution_template<28,28,28,28,3>(&input,temp_1);
+	my_data_type temp_1[28*28];
+	layer_1: convolution_template<28,28,1,3>(&input,temp_1);
 
 	my_data_type temp_2[28*28];
-	layer_2: pooling_template<28,28,28,28>(temp_1,temp_2);
+	layer_2: pooling_template<28,28,1,2>(temp_1,temp_2);
 
 	my_data_type temp_3[28*28];
 	layer_3: relu_template<28,28>(temp_2,temp_3);
 
 	output_layer: fully_connected_template<28*28,10>(temp_3,&output);
 }
-*/
