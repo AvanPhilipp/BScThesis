@@ -324,38 +324,170 @@ template<int LAYERS, int TSIZE, int WIDTH, int HEIGHT> inline void pool_t(
 	}
 }
 
-template<int IN_WIDTH, int IN_HEIGHT, int IN_DEPTH, int TEMPLATE_SIZE> inline void convolution_template(
+template<int IN_WIDTH, int IN_HEIGHT, int IN_DEPTH, int TEMPLATE_SIZE, int OUT_DEPTH> inline void convolution_template(
 		//hls::stream<ap_uint< sizeof(my_data_typemy_data_type)*8*IN_DEPTH> >input,  // ez biztos hogy jó. próbáljuk ki tömbbel...
 		hls::stream< my_data_type[IN_DEPTH] > &input,
-		hls::stream< my_data_type[IN_DEPTH] > &output,
-		hls::stream< my_templ_type[IN_DEPTH] > &templ,
-		hls::stream< my_templ_type[IN_DEPTH] > &templ_b)
+		hls::stream< my_data_type[OUT_DEPTH] > &output,
+		hls::stream< my_templ_type > &templ,
+		bool template_load)
 {
 	my_data_type image[IN_WIDTH][TEMPLATE_SIZE-1][IN_DEPTH]; //teljes két sort tartalmazza
-	my_data_type image_register = templ.read();
+	my_data_type image_register[IN_DEPTH] = templ.read();
 	//my_data_type mixer[TEMPLATE_SIZE][TEMPLATE_SIZE][IN_DEPTH];
 
-	my_data_type weigts[TEMPLATE_SIZE][TEMPLATE_SIZE][IN_DEPTH];
-	my_data_type bias[IN_DEPTH] = templ_b.read();
+	my_data_type weigts[TEMPLATE_SIZE][TEMPLATE_SIZE][IN_DEPTH][OUT_DEPTH];
+	my_data_type bias[OUT_DEPTH];
 
+
+	/*
+	 * Minden réteget egy template-vel konvolválunk végig.
+	 * A template betöltése utána ezt többet nem kell újratölteni
+	 */
+	if(template_load){
+		/*
+		 * OUT_DEPTH emeli meg a harmadik dimenzióját a képnek.
+		 */
+		LOAD_WEIGHTS:for(int o=0;o<OUT_DEPTH;o++){
+			for(int h=0;h<IN_DEPTH;h++){
+				for(int i=0;i<TEMPLATE_SIZE;i++){
+					for(int j=0;j<TEMPLATE_SIZE;j++){
+						weigts[i][j][h][o] = templ.read();
+					}
+				}
+
+			}
+		}
+
+		bias = templ.read();
+	}
+
+
+	/*
+	 * Alternatív image loading mechanizmus....
+	 * kísérlet alatt. Megnézzük így megy-e.
+	 * Ha jó akkor ez hatékonyabb mint az alsó
+	 */
+	int address = 0;
+	for (int i = 0; i < IN_HEIGHT; i++) {
+		for (int j = 0; j < IN_WIDTH; j++) {
+
+			/**
+			 * Csak a template-n belüli mozgásra kell.
+			 * A ciklus futása után eldobjuk és újra elkérjük az aktuális memóriacímet.
+			 */
+			int read_address = address;
+
+
+			image_register = input.read();
+			my_data_type sum[OUT_DEPTH] = {0}; // Jó a nulla vagy itt kellene valami minimum érték
+
+
+			/**
+			 * Blockramos megvalósítás esetén mindig csak három pixelt veszünk ki.
+			 * Ezt háromszor tesszük meg templatenként.
+			 * A súlyokat így sebességveszteség nélkül lehet három memóriába eltásolni a kilenc helyett.
+			 * Cserébe a memóriacímekkel kell megoldani a megfelelő pixel betöltését.
+			 */
+			for(int tw=0;tw<TEMPLATE_SIZE;tw++){
+				for(int th=0; th<TEMPLATE_SIZE-1;th++){
+
+					/**
+					 * Minden bemenetet összeszorzunk a hozzá rendelt súllyal. (IN_DEPTH)
+					 * Ha a kimenet szélesebb akkor itt több súllyal is összeszorottuk. (OUT_DEPTH)
+					 */
+					for(int h=0;h<IN_DEPTH;h++){
+						for(int o=0;o<OUT_DEPTH;o++){
+							sum[o] += image[read_address][th][h] * weigts[0][th][h][o];
+						}
+					}
+
+					/**
+					 * Minden pixelt egyel feljebbi memóriacímre tol.
+					 */
+					image[read_address][th] = image[read_address][th+1];
+				}
+
+
+				/**
+				 * At utolsó pixel feljebbtolása után a lealsó pixel üres lesz.
+				 * Ide betöltjük a regiszterben lévő értéket.
+				 * Utána arra is kiszámoljuk a szorzásokat.
+				 */
+				// Nem jó!
+				// Mindig betölt akkor is ha nem kellene neki.
+				// HELP!!!
+				image[read_address][TEMPLATE_SIZE-1] = image_register;
+				for(int h=0;h<IN_DEPTH;h++){
+					for(int o=0;o<OUT_DEPTH;o++){
+						sum[o] += image[read_address][TEMPLATE_SIZE-1][h] * weigts[0][TEMPLATE_SIZE-1][h][o];
+					}
+				}
+
+
+				/**
+				 * A blokkramban egyel arrébb lépünk.
+				 * Ez a tempalte következő oszlopát jelenti.
+				 */
+				read_address++;
+			}
+
+			/**
+			 * Ha az egész template lefutott akkor még hozzáadunk egy biast is.
+			 */
+
+			for(int o=0;o<OUT_DEPTH;o++){
+				sum[o] +=bias[o];
+			}
+
+			/**
+			 * Utólagos megfontolás miatt beépített ReLu réteg a konvolúciós rétegbe.
+			 *
+			for(my_data_type temp:sum){
+				if(temp < 0){
+					temp = 0;
+				}
+			}
+			*/
+
+
+			/**
+			 * A kimenetre már OUT_DEPTH mennyiségű adatot írunk.
+			 */
+			output.write(sum);
+
+			/**
+			 * A memóriában tovább lépünk egyel, a templatet egy pixellel csúsztatjuk.
+			 * A végleges megvalósításban itt a lépés méretét kell majd állíthatóvá tenni.
+			 * (ne indexeljen ki a memóriából)
+			 */
+			address++;
+		}
+	}
+
+//*/
+
+	/*
+	 * Eredeti ötlet. Majdnem biztos hogy nem jó megoldás. Ha a fenti nem jó akkor ezt kell kikupálni.
+	 *
 	int actual=0;
 /// ellenőrizni kellene hogy mindent jó helyről szedek-e...
 	FOR_IN_HEIGHT: for (int i = 0; i < IN_HEIGHT; i++) {
+		// ide kell egy pipeline
 		FOR_IN_WIDTH: for (int j = 0; j < IN_WIDTH; j++) {
 
 			for(int i=0; i<TEMPLATE_SIZE;i++){
 				for(int j=0; j<TEMPLATE_SIZE-1;j++){
 					for(int h=0;h<IN_DEPTH;h++){
-						weigts[i][j][h] = weigts[i][j+1][h];
+						image[i][j][h] = image[i][j+1][h];
 					}
 				}
 				for(int j=0;j<TEMPLATE_SIZE;j++){
-					weigts[i][j][TEMPLATE_SIZE-1] = image[i][actual][TEMPLATE_SIZE-1];
+					image[i][j][TEMPLATE_SIZE-1] = image[i][actual][TEMPLATE_SIZE-1];
 				}
 			}
 			for(int i=0;i<TEMPLATE_SIZE-1;i++){
 				for(int h=0;h<IN_DEPTH;h++){
-					image[0][i][h] = weigts[TEMPLATE_SIZE-1][i][h];
+					image[0][i][h] = image[TEMPLATE_SIZE-1][i][h];
 				}
 			}
 
@@ -371,7 +503,7 @@ template<int IN_WIDTH, int IN_HEIGHT, int IN_DEPTH, int TEMPLATE_SIZE> inline vo
 			}
 
 		}
-	}
+	}*/
 }
 
 template<int IN_WIDTH, int IN_HEIGHT, int IN_DEPTH, int POOL_SIZE>inline void pooling_template(
@@ -429,7 +561,9 @@ template<int IN_SIZE, int OUT_SIZE> inline void fully_connected_template(
 	}
 
 
-// ReLu réteg a nagyobb modulatitás elérés érdekében... (jobban megértettem a működést.)
+/**
+ * ReLu réteg a nagyobb modulatitás elérés érdekében... (jobban megértettem a működést.)
+ */
 template<int SIZE> inline void relu_template(
 	hls::stream< my_data_type > &input,
 	hls::stream< my_data_type > &output)

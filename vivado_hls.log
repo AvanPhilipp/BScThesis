@@ -1,5 +1,5 @@
 INFO: [HLS 200-10] Running '/opt/Xilinx/Vivado_HLS/2016.4/bin/unwrapped/lnx64.o/vivado_hls'
-INFO: [HLS 200-10] For user 'kotfu' on host 'VLSI-01' (Linux_x86_64 version 3.16.0-77-generic) on Tue Oct 10 13:04:11 CEST 2017
+INFO: [HLS 200-10] For user 'kotfu' on host 'VLSI-01' (Linux_x86_64 version 3.16.0-77-generic) on Mon Oct 16 11:52:22 CEST 2017
 INFO: [HLS 200-10] On os Ubuntu 14.04.5 LTS
 INFO: [HLS 200-10] In directory '/home/kotfu/BSCThesis'
 INFO: [HLS 200-10] Opening project '/home/kotfu/BSCThesis/Conv_net'.
@@ -8,21 +8,21 @@ INFO: [SYN 201-201] Setting up clock 'default' with a period of 10ns.
 INFO: [HLS 200-10] Setting target device to 'xc7z020clg484-1'
 INFO: [SIM 211-2] *************** CSIM start ***************
 INFO: [SIM 211-4] CSIM will launch GCC as the compiler.
-   Compiling ../../../../conv_tb.cpp in debug mode
    Compiling ../../../../conv.cpp in debug mode
-../../../../conv.cpp: In function ‘void network(my_data_type&, my_data_type&)’:
-../../../../conv.cpp:43:57: error: no matching function for call to ‘convolution_template(my_data_type*, my_data_type [784])’
-../../../../conv.cpp:43:57: note: candidate is:
-../../../../conv.h:314:84: note: template<int IN_WIDTH, int IN_HEIGHT, int IN_DEPTH, int TEMPLATE_SIZE> void convolution_template(hls::stream<short int [IN_DEPTH]>&, hls::stream<short int [IN_DEPTH]>&, hls::stream<short int [IN_DEPTH]>&, hls::stream<short int [IN_DEPTH]>&)
-../../../../conv.cpp:46:54: error: no matching function for call to ‘pooling_template(my_data_type [784], my_data_type [784])’
-../../../../conv.cpp:46:54: note: candidate is:
-../../../../conv.h:364:79: note: template<int IN_WIDTH, int IN_HEIGHT, int IN_DEPTH, int POOL_SIZE> void pooling_template(hls::stream<short int [IN_DEPTH]>&, hls::stream<short int [IN_DEPTH]>&)
-../../../../conv.cpp:49:45: error: no matching function for call to ‘relu_template(my_data_type [784], my_data_type [784])’
-../../../../conv.cpp:49:45: note: candidate is:
-../../../../conv.h:420:32: note: template<int SIZE> void relu_template(hls::stream<short int>&, hls::stream<short int>&)
-../../../../conv.cpp:51:65: error: no matching function for call to ‘fully_connected_template(my_data_type [784], my_data_type*)’
-../../../../conv.cpp:51:65: note: candidate is:
-../../../../conv.h:398:49: note: template<int IN_SIZE, int OUT_SIZE> void fully_connected_template(hls::stream<short int>&, hls::stream<short int>&)
+In file included from ../../../../conv.cpp:1:0:
+/opt/Xilinx/Vivado_HLS/2016.4/include/hls_stream.h: In instantiation of ‘hls::stream<short int [8]>’:
+../../../../conv.cpp:40:34:   instantiated from here
+/opt/Xilinx/Vivado_HLS/2016.4/include/hls_stream.h:202:18: error: function returning an array
+/opt/Xilinx/Vivado_HLS/2016.4/include/hls_stream.h: In instantiation of ‘hls::stream<short int [1]>’:
+../../../../conv.cpp:45:46:   instantiated from here
+/opt/Xilinx/Vivado_HLS/2016.4/include/hls_stream.h:202:18: error: function returning an array
+../../../../conv.cpp: In function ‘void network(hls::stream<short int [1]>&, hls::stream<short int [8]>&)’:
+../../../../conv.cpp:45:78: error: no matching function for call to ‘convolution_template(hls::stream<short int [1]>*, hls::stream<short int [8]>*, hls::stream<short int>*, bool&)’
+../../../../conv.cpp:45:78: note: candidate is:
+../../../../conv.h:327:99: note: template<int IN_WIDTH, int IN_HEIGHT, int IN_DEPTH, int TEMPLATE_SIZE, int OUT_DEPTH> void convolution_template(hls::stream<short int [IN_DEPTH]>&, hls::stream<short int [OUT_DEPTH]>&, hls::stream<short int>&, bool)
+../../../../conv.cpp:49:77: error: no matching function for call to ‘convolution_template(hls::stream<short int [8]>*, hls::stream<short int [8]>*, hls::stream<short int>*, bool&)’
+../../../../conv.cpp:49:77: note: candidate is:
+../../../../conv.h:327:99: note: template<int IN_WIDTH, int IN_HEIGHT, int IN_DEPTH, int TEMPLATE_SIZE, int OUT_DEPTH> void convolution_template(hls::stream<short int [IN_DEPTH]>&, hls::stream<short int [OUT_DEPTH]>&, hls::stream<short int>&, bool)
 make: *** [obj/conv.o] Error 1
 ERROR: [SIM 211-100] CSim file generation failed: compilation error(s).
 INFO: [SIM 211-3] *************** CSIM finish ***************

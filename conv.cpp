@@ -35,18 +35,26 @@ void pool(hls::stream<ap_axiu<8*sizeof(my_data_type)*8,1,1,1> > &x_in, hls::stre
 	pool_t<8,2,512,512>(x_in, x_out);
 }
 
-
-
-void network (hls::stream< my_data_type[1] > &input, my_data_type &output)
+void network (hls::stream< my_data_type[1] > &input, hls::stream< my_data_type[8] > &output)
 {
-	my_data_type temp_1[28*28];
-	layer_1: convolution_template<28,28,1,3>(&input,temp_1);
+	hls::stream < my_data_type[8] > temp_1;
+	hls::stream < my_templ_type > templ_1;
+	bool t_load = false;
 
-	my_data_type temp_2[28*28];
-	layer_2: pooling_template<28,28,1,2>(temp_1,temp_2);
+#pragma HLS stream variable=<my_data_type> depth=<8> dim=<1> off
+	layer_1: convolution_template<28,28,1,3,8>(&input, &temp_1, &templ_1, t_load);
 
-	my_data_type temp_3[28*28];
-	layer_3: relu_template<28,28>(temp_2,temp_3);
+//	hls::stream< my_data_type > temp_2;
+	hls::stream< my_templ_type > templ_2;
+	layer_2: convolution_template<28,28,8,3,8>(&temp_1,&output,&templ_2, t_load);
 
-	output_layer: fully_connected_template<28*28,10>(temp_3,&output);
+
+
+//	my_data_type temp_2[28*28];
+//	layer_2: pooling_template<28,28,1,2>(temp_1,temp_2);
+//
+//	my_data_type temp_3[28*28];
+//	layer_3: relu_template<28,28>(temp_2,temp_3);
+//
+//	output_layer: fully_connected_template<28*28,10>(temp_3,&output);
 }
