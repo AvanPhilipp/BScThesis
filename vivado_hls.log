@@ -1,36 +1,58 @@
 INFO: [HLS 200-10] Running '/opt/Xilinx/Vivado_HLS/2016.4/bin/unwrapped/lnx64.o/vivado_hls'
-INFO: [HLS 200-10] For user 'kotfu' on host 'VLSI-01' (Linux_x86_64 version 3.16.0-77-generic) on Mon Oct 16 11:52:22 CEST 2017
+INFO: [HLS 200-10] For user 'kotfu' on host 'VLSI-01' (Linux_x86_64 version 3.16.0-77-generic) on Tue Nov 07 11:16:35 CET 2017
 INFO: [HLS 200-10] On os Ubuntu 14.04.5 LTS
 INFO: [HLS 200-10] In directory '/home/kotfu/BSCThesis'
 INFO: [HLS 200-10] Opening project '/home/kotfu/BSCThesis/Conv_net'.
-INFO: [HLS 200-10] Opening solution '/home/kotfu/BSCThesis/Conv_net/Start'.
+INFO: [HLS 200-10] Opening solution '/home/kotfu/BSCThesis/Conv_net/mine'.
 INFO: [SYN 201-201] Setting up clock 'default' with a period of 10ns.
 INFO: [HLS 200-10] Setting target device to 'xc7z020clg484-1'
 INFO: [SIM 211-2] *************** CSIM start ***************
 INFO: [SIM 211-4] CSIM will launch GCC as the compiler.
-   Compiling ../../../../conv.cpp in debug mode
-In file included from ../../../../conv.cpp:1:0:
-/opt/Xilinx/Vivado_HLS/2016.4/include/hls_stream.h: In instantiation of ‘hls::stream<short int [8]>’:
-../../../../conv.cpp:40:34:   instantiated from here
-/opt/Xilinx/Vivado_HLS/2016.4/include/hls_stream.h:202:18: error: function returning an array
-/opt/Xilinx/Vivado_HLS/2016.4/include/hls_stream.h: In instantiation of ‘hls::stream<short int [1]>’:
-../../../../conv.cpp:45:46:   instantiated from here
-/opt/Xilinx/Vivado_HLS/2016.4/include/hls_stream.h:202:18: error: function returning an array
-../../../../conv.cpp: In function ‘void network(hls::stream<short int [1]>&, hls::stream<short int [8]>&)’:
-../../../../conv.cpp:45:78: error: no matching function for call to ‘convolution_template(hls::stream<short int [1]>*, hls::stream<short int [8]>*, hls::stream<short int>*, bool&)’
-../../../../conv.cpp:45:78: note: candidate is:
-../../../../conv.h:327:99: note: template<int IN_WIDTH, int IN_HEIGHT, int IN_DEPTH, int TEMPLATE_SIZE, int OUT_DEPTH> void convolution_template(hls::stream<short int [IN_DEPTH]>&, hls::stream<short int [OUT_DEPTH]>&, hls::stream<short int>&, bool)
-../../../../conv.cpp:49:77: error: no matching function for call to ‘convolution_template(hls::stream<short int [8]>*, hls::stream<short int [8]>*, hls::stream<short int>*, bool&)’
-../../../../conv.cpp:49:77: note: candidate is:
-../../../../conv.h:327:99: note: template<int IN_WIDTH, int IN_HEIGHT, int IN_DEPTH, int TEMPLATE_SIZE, int OUT_DEPTH> void convolution_template(hls::stream<short int [IN_DEPTH]>&, hls::stream<short int [OUT_DEPTH]>&, hls::stream<short int>&, bool)
-make: *** [obj/conv.o] Error 1
+   Compiling ../../../../conv_tb.cpp in debug mode
+   Generating csim.exe
+/usr/bin/ld: warning: libjpeg.so.62, needed by /opt/Xilinx/Vivado_HLS/2016.4/lnx64/tools/opencv/libopencv_highgui.so, not found (try using -rpath or -rpath-link)
+/usr/bin/ld: warning: libtiff.so.3, needed by /opt/Xilinx/Vivado_HLS/2016.4/lnx64/tools/opencv/libopencv_highgui.so, not found (try using -rpath or -rpath-link)
+/opt/Xilinx/Vivado_HLS/2016.4/lnx64/tools/opencv/libopencv_highgui.so: undefined reference to `jpeg_resync_to_restart'
+/opt/Xilinx/Vivado_HLS/2016.4/lnx64/tools/opencv/libopencv_highgui.so: undefined reference to `TIFFReadRGBATile'
+/opt/Xilinx/Vivado_HLS/2016.4/lnx64/tools/opencv/libopencv_highgui.so: undefined reference to `TIFFSetWarningHandler'
+/opt/Xilinx/Vivado_HLS/2016.4/lnx64/tools/opencv/libopencv_highgui.so: undefined reference to `jpeg_std_error'
+/opt/Xilinx/Vivado_HLS/2016.4/lnx64/tools/opencv/libopencv_highgui.so: undefined reference to `jpeg_CreateDecompress'
+/opt/Xilinx/Vivado_HLS/2016.4/lnx64/tools/opencv/libopencv_highgui.so: undefined reference to `jpeg_start_compress'
+/opt/Xilinx/Vivado_HLS/2016.4/lnx64/tools/opencv/libopencv_highgui.so: undefined reference to `TIFFSetField'
+/opt/Xilinx/Vivado_HLS/2016.4/lnx64/tools/opencv/libopencv_highgui.so: undefined reference to `jpeg_set_quality'
+/opt/Xilinx/Vivado_HLS/2016.4/lnx64/tools/opencv/libopencv_highgui.so: undefined reference to `jpeg_read_header'
+/opt/Xilinx/Vivado_HLS/2016.4/lnx64/tools/opencv/libopencv_highgui.so: undefined reference to `TIFFClose'
+/opt/Xilinx/Vivado_HLS/2016.4/lnx64/tools/opencv/libopencv_highgui.so: undefined reference to `TIFFReadRGBAStrip'
+/opt/Xilinx/Vivado_HLS/2016.4/lnx64/tools/opencv/libopencv_highgui.so: undefined reference to `TIFFGetField'
+/opt/Xilinx/Vivado_HLS/2016.4/lnx64/tools/opencv/libopencv_highgui.so: undefined reference to `jpeg_alloc_huff_table'
+/opt/Xilinx/Vivado_HLS/2016.4/lnx64/tools/opencv/libopencv_highgui.so: undefined reference to `jpeg_destroy_decompress'
+/opt/Xilinx/Vivado_HLS/2016.4/lnx64/tools/opencv/libopencv_highgui.so: undefined reference to `jpeg_stdio_dest'
+/opt/Xilinx/Vivado_HLS/2016.4/lnx64/tools/opencv/libopencv_highgui.so: undefined reference to `TIFFReadEncodedTile'
+/opt/Xilinx/Vivado_HLS/2016.4/lnx64/tools/opencv/libopencv_highgui.so: undefined reference to `TIFFWriteScanline'
+/opt/Xilinx/Vivado_HLS/2016.4/lnx64/tools/opencv/libopencv_highgui.so: undefined reference to `jpeg_finish_compress'
+/opt/Xilinx/Vivado_HLS/2016.4/lnx64/tools/opencv/libopencv_highgui.so: undefined reference to `TIFFReadEncodedStrip'
+/opt/Xilinx/Vivado_HLS/2016.4/lnx64/tools/opencv/libopencv_highgui.so: undefined reference to `jpeg_destroy_compress'
+/opt/Xilinx/Vivado_HLS/2016.4/lnx64/tools/opencv/libopencv_highgui.so: undefined reference to `TIFFIsTiled'
+/opt/Xilinx/Vivado_HLS/2016.4/lnx64/tools/opencv/libopencv_highgui.so: undefined reference to `jpeg_finish_decompress'
+/opt/Xilinx/Vivado_HLS/2016.4/lnx64/tools/opencv/libopencv_highgui.so: undefined reference to `jpeg_set_defaults'
+/opt/Xilinx/Vivado_HLS/2016.4/lnx64/tools/opencv/libopencv_highgui.so: undefined reference to `TIFFOpen'
+/opt/Xilinx/Vivado_HLS/2016.4/lnx64/tools/opencv/libopencv_highgui.so: undefined reference to `TIFFSetErrorHandler'
+/opt/Xilinx/Vivado_HLS/2016.4/lnx64/tools/opencv/libopencv_highgui.so: undefined reference to `jpeg_start_decompress'
+/opt/Xilinx/Vivado_HLS/2016.4/lnx64/tools/opencv/libopencv_highgui.so: undefined reference to `jpeg_write_scanlines'
+/opt/Xilinx/Vivado_HLS/2016.4/lnx64/tools/opencv/libopencv_highgui.so: undefined reference to `TIFFRGBAImageOK'
+/opt/Xilinx/Vivado_HLS/2016.4/lnx64/tools/opencv/libopencv_highgui.so: undefined reference to `TIFFScanlineSize'
+/opt/Xilinx/Vivado_HLS/2016.4/lnx64/tools/opencv/libopencv_highgui.so: undefined reference to `jpeg_CreateCompress'
+/opt/Xilinx/Vivado_HLS/2016.4/lnx64/tools/opencv/libopencv_highgui.so: undefined reference to `jpeg_read_scanlines'
+/opt/Xilinx/Vivado_HLS/2016.4/lnx64/tools/opencv/libopencv_highgui.so: undefined reference to `jpeg_stdio_src'
+collect2: ld returned 1 exit status
+make: *** [csim.exe] Error 1
 ERROR: [SIM 211-100] CSim file generation failed: compilation error(s).
 INFO: [SIM 211-3] *************** CSIM finish ***************
 5
     while executing
-"source /home/kotfu/BSCThesis/Conv_net/Start/csim.tcl"
+"source /home/kotfu/BSCThesis/Conv_net/mine/csim.tcl"
     invoked from within
-"hls::main /home/kotfu/BSCThesis/Conv_net/Start/csim.tcl"
+"hls::main /home/kotfu/BSCThesis/Conv_net/mine/csim.tcl"
     ("uplevel" body line 1)
     invoked from within
 "uplevel 1 hls::main {*}$args"
