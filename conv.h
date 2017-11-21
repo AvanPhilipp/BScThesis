@@ -81,8 +81,8 @@ void pool(
 //		int tload);
 
 void mnistNet(
-		hls::stream< ap_uint< 1*sizeof(my_data_type)*8> > &input,
-		hls::stream< ap_uint< 10*sizeof(my_data_type)*8> > &output,
+		hls::stream< ap_uint< sizeof(my_data_type)*8> > &input,
+		hls::stream< ap_uint< sizeof(my_data_type)*8> > &output,
 		stream<my_templ_type> &templ,
 		int tload);
 void VGGNet(

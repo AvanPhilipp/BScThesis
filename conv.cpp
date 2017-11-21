@@ -123,8 +123,8 @@ void pool(hls::stream<ap_axiu<8*sizeof(my_data_type)*8,1,1,1> > &x_in, hls::stre
 //}
 
 void mnistNet (
-		hls::stream< ap_uint< 1*sizeof(my_data_type)*8> > &input,
-		hls::stream< ap_uint< 10*sizeof(my_data_type)*8> > &output,
+		hls::stream< ap_uint< sizeof(my_data_type)*8> > &input,
+		hls::stream< ap_uint< sizeof(my_data_type)*8> > &output,
 		hls::stream<my_templ_type> &templ,
 		int tload)
 {
@@ -146,9 +146,9 @@ void mnistNet (
 	hls::stream< ap_uint< 128*sizeof(my_data_type)*8> > maxpool_3_temp;
 	maxpool_3: pooling_template<12,12,128,2>(conv3_3_temp,maxpool_3_temp);
 
-	hls::stream< ap_uint< 10*sizeof(my_data_type)*8> > fc_1_temp;
-	FC_1: fully_connected_template<128,10>(maxpool_3_temp,fc_1_temp,templ,tload);
+//	hls::stream< ap_uint< 10*sizeof(my_data_type)*8> > fc_1_temp;
+	FC_1: fully_connected_template<128,10>(maxpool_3_temp,output,templ,tload);
 
-	softmax: relu_template<10>(fc_1_temp,output);
+//	softmax: relu_template<10>(fc_1_temp,output);
 }
 

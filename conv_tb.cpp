@@ -2,9 +2,7 @@
 //#include <ap_int.h>
 //#include <ap_axi_sdata.h>
 //#include "conv.h"
-//
-//using namespace hls;
-//
+
 //int main()
 //{
 //	stream<my_data_in_type> x_in;
@@ -50,6 +48,11 @@
 #include <opencv2/core/core.hpp>
 #include <opencv2/highgui/highgui.hpp>
 #include <fstream>
+#include <sstream>
+#include <string>
+//#include <typeinfo>
+
+using namespace hls;
 
 uint32_t reverseBits(uint32_t n) {
 //        n = (n >> 1) & 0x55555555 | (n << 1) & 0xaaaaaaaa;
@@ -62,19 +65,37 @@ uint32_t reverseBits(uint32_t n) {
 
 int main(){
 
+	hls::stream< ap_uint<sizeof(my_data_type)*8> > input;
+	hls::stream< ap_uint<sizeof(my_data_type)*8> > output;
+	hls::stream<my_templ_type> templ;
 
-	std::ifstream in_image("/home/kotfu/Downloads/t10k-images.idx3-ubyte");
-	std::ifstream in_weights("/.almafa");
+	const char *image_path = "/home/kotfu/Downloads/t10k-images.idx3-ubyte";
+	const char *weight_path = "/home/kotfu/BSCThesis/Weights/weight_array.wgt";
 
-	bool t_load;
-//	hls::stream<my_templ_type> templ;
-//	hls::stream<ap_uint< 1*sizeof(my_data_type)*8>> input;
-//	hls::stream<ap_uint< 10*sizeof(my_data_type)*8>> output;
+	printf("Reading weights from %s\n",weight_path);
+	std::ifstream in_weights(weight_path);
+	printf("Weights file %s\n", in_weights.is_open() ? "is opened" : "failed to open");
 
-	if(in_weights.is_open()){
+	bool t_load = true;
+	for(std::string line; std::getline(in_weights, line); ){
+		std::istringstream in(line);
+
+		float weight;
+		in >> weight;
+
+		templ.write(weight);
+//		printf("type: %s, value: %f\n", typeid(weight).name(),weight);
 
 	}
+	printf("Weights loaded\n");
 
+
+
+	printf("Reading image from %s\n", image_path);
+	std::ifstream in_image(image_path);
+	printf("Image file %s\n",in_image.is_open() ? " is opened" : "failed to open");
+
+	t_load = false;
 	if(in_image.is_open()){
 
 		unsigned char value;
@@ -96,14 +117,14 @@ int main(){
 			for(int h=0; h<width;h++){
 				in_image.read((char*)&value,sizeof(unsigned char));
 
-//				input.write(value);
+				input.write(value);
 
-				printf("Readed value: %X\n",value);
+//				printf("Readed value: %X\n",value);
 
 			}
 		}
 	}
 
-//	mnistNet(input,output,templ, t_load);
+	mnistNet(input,output,templ, t_load);
 	return 0;
 }
