@@ -62,23 +62,27 @@ uint32_t reverseBits(uint32_t n) {
 
 int main(){
 
-	std::ifstream in_image("/home/kotfu/Downloads/t10k-images.idx3-ubyte");
-//	std::ofstream output("/home/kotfu/Downloads/t10k-images.idx3-ubyte.bmp");
-	cv::FileStorage out_image("/home/kotfu/Downloads/t10k-images.idx3-ubyte.png", cv::FileStorage::WRITE);
 
+	std::ifstream in_image("/home/kotfu/Downloads/t10k-images.idx3-ubyte");
+	std::ifstream in_weights("/.almafa");
 
 	bool t_load;
-	hls::stream<my_templ_type> templ;
-	hls::stream<uint8_t> input;
-	hls::stream<uint64_t> output;
+//	hls::stream<my_templ_type> templ;
+//	hls::stream<ap_uint< 1*sizeof(my_data_type)*8>> input;
+//	hls::stream<ap_uint< 10*sizeof(my_data_type)*8>> output;
 
-	unsigned char value;
-	uint32_t magic;
-	uint32_t counter;
-	uint32_t width;
-	uint32_t height;
+	if(in_weights.is_open()){
+
+	}
 
 	if(in_image.is_open()){
+
+		unsigned char value;
+		uint32_t magic;
+		uint32_t counter;
+		uint32_t width;
+		uint32_t height;
+
 		in_image.read((char*)&magic,sizeof(uint32_t));
 		magic = reverseBits(magic);
 		in_image.read((char*)&counter,sizeof(uint32_t));
@@ -88,34 +92,18 @@ int main(){
 		in_image.read((char*)&width,sizeof(uint32_t));
 		width = reverseBits(width);
 
-//		cv::Mat display_image(width,height,CV_8UC1,cv::Scalar(0));
-//		unsigned char matrix[height][width];
-
 		for(int w=0; w<width;w++){
 			for(int h=0; h<width;h++){
 				in_image.read((char*)&value,sizeof(unsigned char));
 
+//				input.write(value);
 
-				input.write(value);
-
-
-
-
-//				matrix[h][w] = value;
-
-//				display_image.at<cv::Vec3b>(cv::Point(w,h)) = value;
-
-//				printf("Readed value: %X\n",value);
+				printf("Readed value: %X\n",value);
 
 			}
 		}
-
-//		std::vector<int> compression_params;
-//		compression_params.push_back(CV_IMWRITE_PNG_COMPRESSION);
-//		compression_params.push_back(9);
-//		cv::imwrite("alpha.png", display_image, compression_params);
 	}
 
-	network(input,output,templ, t_load);
+//	mnistNet(input,output,templ, t_load);
 	return 0;
 }

@@ -73,11 +73,22 @@ void pool(
 		hls::stream<ap_axiu<1*sizeof(my_data_type)*8,1,1,1> > &x_in,
 		hls::stream<ap_axiu<1*sizeof(my_data_type)*8,1,1,1> > &x_out);
 */
-void network (
+//void network (
+//		hls::stream< ap_uint< 1*sizeof(my_data_type)*8> > &input,
+//		hls::stream< ap_uint< 8*sizeof(my_data_type)*8> > &output,
+//		stream<my_templ_type> &templ_1,
+//		stream<my_templ_type> &templ_2,
+//		int tload);
+
+void mnistNet(
 		hls::stream< ap_uint< 1*sizeof(my_data_type)*8> > &input,
-		hls::stream< ap_uint< 8*sizeof(my_data_type)*8> > &output,
-		stream<my_templ_type> &templ_1,
-		stream<my_templ_type> &templ_2,
+		hls::stream< ap_uint< 10*sizeof(my_data_type)*8> > &output,
+		stream<my_templ_type> &templ,
+		int tload);
+void VGGNet(
+		hls::stream< ap_uint< 1*sizeof(my_data_type)*8> > &input,
+		hls::stream< ap_uint< 1000*sizeof(my_data_type)*8> > &output,
+		stream<my_templ_type> &templ,
 		int tload);
 
 inline ap_uint<sizeof(my_data_type)*8> float2ap_uint(
@@ -804,7 +815,7 @@ template<int IN_WIDTH, int IN_HEIGHT, int IN_DEPTH, int POOL_SIZE>inline void po
 				/**
 				 * ap_uint-ből tömbbe olvassuk az adatokat.
 				 */
-				image_register[h]=input_tmp((h+1)*sizeof(my_data_type)*8-1,h*sizeof(my_data_type)*8);
+				image_register[h]=input_tmp;
 				if(w%POOL_SIZE==0){
 					/**
 					 * Amennyiben az első sor első oszlopában vagyunk a maximum érték 0.
@@ -913,7 +924,7 @@ template<int IN_WIDTH, int IN_HEIGHT, int IN_DEPTH, int POOL_SIZE>inline void po
 template<int IN_SIZE, int OUT_SIZE> inline void fully_connected_template(
 		hls::stream< ap_uint< IN_SIZE*sizeof(my_data_type)*8> > &input,
 		hls::stream< ap_uint< OUT_SIZE*sizeof(my_data_type)*8> > &output,
-		hls::stream< (IN_SIZE*OUT_SIZE+1)*sizeof(my_templ_type)*8 > &weight,
+		hls::stream< my_templ_type > &weight,
 		int template_load)
 {
 	my_templ_type weight_temp;
@@ -927,9 +938,9 @@ template<int IN_SIZE, int OUT_SIZE> inline void fully_connected_template(
 		weight_temp = weight.read();
 		for(int o = 0; o<OUT_SIZE;o++){
 			for(int i =0;i<IN_SIZE;i++){
-				weights[i][o]=weight_temp((i*o+1)*sizeof(my_data_type)*8-1,i*o*sizeof(my_data_type)*8);
+				weights[i][o]=weight_temp;
 			}
-			bias[o] = weight_temp((IN_SIZE*o+1)*sizeof(my_data_type)*8-1,IN_SIZE*o*sizeof(my_data_type)*8);
+			bias[o] = weight_temp;
 		}
 	}
 	// Minden kimenetre ad valami értéket.
@@ -945,13 +956,12 @@ template<int IN_SIZE, int OUT_SIZE> inline void fully_connected_template(
 		}
 	}
 
-
 /**
  * ReLu réteg a nagyobb modulatitás elérés érdekében... (jobban megértettem a működést.)
  */
 template<int SIZE> inline void relu_template(
-	hls::stream< my_data_type > &input,
-	hls::stream< my_data_type > &output)
+	hls::stream< ap_uint< SIZE*sizeof(my_data_type)*8>  > &input,
+	hls::stream< ap_uint< SIZE*sizeof(my_data_type)*8>  > &output)
 {
 	FOR_INPUTS : for(int i =0;i<SIZE;i++){
 		my_data_type temp = input.read();
