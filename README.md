@@ -12,7 +12,7 @@ I started the work with the fully connected layer implementation.
 * validation data 5000 point
 
 ### TODO
-- [*] TestBranch
+- [x] TestBranch
 - [ ] Fully Connected bitenként adja ki az eredményt
 - [ ] Sythesis
 
