@@ -128,26 +128,35 @@ void mnistNet (
 		hls::stream<my_templ_type> &templ,
 		int tload)
 {
+	hls::stream< my_templ_type > weight_conv1;
 	hls::stream< ap_uint< 32*sizeof(my_data_type)*8> > conv3_1_temp;
-	conv3_1: convolution_template<28,28,1,5,32>(input, conv3_1_temp,templ,tload);
+	conv3_1: convolution_template<28,28,1,5,32>(input, conv3_1_temp,templ,weight_conv1,tload);
 
 	hls::stream< ap_uint< 32*sizeof(my_data_type)*8> > maxpool_1_temp;
 	maxpool_1: pooling_template<28,28,32,2>(conv3_1_temp,maxpool_1_temp);
 
+
+	hls::stream< my_templ_type > weight_conv2;
 	hls::stream< ap_uint< 64*sizeof(my_data_type)*8> > conv3_2_temp;
-	conv3_2: convolution_template<14,14,32,5,64>(maxpool_1_temp,conv3_2_temp,templ,tload);
+	conv3_2: convolution_template<14,14,32,5,64>(maxpool_1_temp,conv3_2_temp,weight_conv1,weight_conv2,tload);
 
 	hls::stream< ap_uint< 64*sizeof(my_data_type)*8> > maxpool_2_temp;
 	maxpool_2: pooling_template<14,14,64,2>(conv3_2_temp,maxpool_2_temp);
 
+
+
+	hls::stream< my_templ_type > weight_conv3;
 	hls::stream< ap_uint< 128*sizeof(my_data_type)*8> > conv3_3_temp;
-	conv3_3: convolution_template<14,14,64,5,128>(maxpool_2_temp,conv3_3_temp,templ,tload);
+	conv3_3: convolution_template<14,14,64,5,128>(maxpool_2_temp,conv3_3_temp,weight_conv2,weight_conv3,tload);
 
 	hls::stream< ap_uint< 128*sizeof(my_data_type)*8> > maxpool_3_temp;
 	maxpool_3: pooling_template<12,12,128,2>(conv3_3_temp,maxpool_3_temp);
 
+
+
+	hls::stream< my_templ_type > weight_fc;
 //	hls::stream< ap_uint< 10*sizeof(my_data_type)*8> > fc_1_temp;
-	FC_1: fully_connected_template<128,10>(maxpool_3_temp,output,templ,tload);
+	FC_1: fully_connected_template<128,1>(maxpool_3_temp,output,weight_conv3,weight_fc,tload);
 
 //	softmax: relu_template<10>(fc_1_temp,output);
 }

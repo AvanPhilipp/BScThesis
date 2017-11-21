@@ -14,9 +14,13 @@ I started the work with the fully connected layer implementation.
 ### TODO
 - [x] Súlyok egy interfacen végigvezetve
 - [x] TestBranch
-- [ ] Fully Connected bitenként adja ki az eredményt
+- [x] Fully Connected bitenként adja ki az eredményt
 - [ ] Sythesis
+- [ ] Implemetácio
 
 ### Questions
 - [ ] SegFault valahol a kódba. Conv_net sum[0] = weight\*input
-- [ ] Conv_templ végén address = 0 ha IN_WIDTH-3???
+- [ ] Conv\_templ végén address = 0 ha IN\_WIDTH-3??? IN\_WIDTH-TEMPLATE\_Size
+- [ ] Address új sorban nem jó(?) értékekkel dolgozik ???
+- [ ] Az MNIST MSB LSB problémája mennyire okoz gondot.
+- [ ] Tensorflow nem ugyan azt húzza be ???

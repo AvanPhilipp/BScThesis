@@ -582,7 +582,8 @@ template<int LAYERS, int TSIZE, int WIDTH, int HEIGHT> inline void pool_t(
 template<int IN_WIDTH, int IN_HEIGHT, int IN_DEPTH, int TEMPLATE_SIZE, int OUT_DEPTH> inline void convolution_template(
 		hls::stream< ap_uint< IN_DEPTH*sizeof(my_data_type)*8> > &input,
 		hls::stream< ap_uint< OUT_DEPTH*sizeof(my_data_type)*8> > &output,
-		hls::stream< my_templ_type > &templ,
+		hls::stream< my_templ_type > &templ_in,
+		hls::stream< my_templ_type > &templ_out,
 		int template_load)
 {
 	my_data_type image[IN_WIDTH][TEMPLATE_SIZE-1][IN_DEPTH];
@@ -605,7 +606,7 @@ template<int IN_WIDTH, int IN_HEIGHT, int IN_DEPTH, int TEMPLATE_SIZE, int OUT_D
 			for(int h=0;h<IN_DEPTH;h++){
 				for(int i=0;i<TEMPLATE_SIZE;i++){
 					for(int j=0;j<TEMPLATE_SIZE;j++){
-						weigts[i][j][h][o] = templ.read();
+						weigts[i][j][h][o] = templ_in.read();
 					}
 				}
 
@@ -613,8 +614,9 @@ template<int IN_WIDTH, int IN_HEIGHT, int IN_DEPTH, int TEMPLATE_SIZE, int OUT_D
 		}
 
 		for(int o=0;o<OUT_DEPTH;o++){
-			bias[o] = templ.read();
+			bias[o] = templ_in.read();
 		}
+		templ_out.write(templ_in.read());
 	}
 
 
@@ -732,7 +734,7 @@ template<int IN_WIDTH, int IN_HEIGHT, int IN_DEPTH, int TEMPLATE_SIZE, int OUT_D
 				 * A végleges megvalósításban itt a lépés méretét kell majd állíthatóvá tenni.
 				 */
 				if(tw == TEMPLATE_SIZE-1){
-					if(address == IN_WIDTH-3){
+					if(address == IN_WIDTH-TEMPLATE_SIZE){ //((TEMPLATE_SIZE-1)/2) //= 3
 						address = 0;
 					}
 					else{
@@ -924,10 +926,10 @@ template<int IN_WIDTH, int IN_HEIGHT, int IN_DEPTH, int POOL_SIZE>inline void po
 template<int IN_SIZE, int OUT_SIZE> inline void fully_connected_template(
 		hls::stream< ap_uint< IN_SIZE*sizeof(my_data_type)*8> > &input,
 		hls::stream< ap_uint< OUT_SIZE*sizeof(my_data_type)*8> > &output,
-		hls::stream< my_templ_type > &weight,
+		hls::stream< my_templ_type > &weight_in,
+		hls::stream< my_templ_type > &weight_out,
 		int template_load)
 {
-	my_templ_type weight_temp;
 	my_templ_type weights[IN_SIZE][OUT_SIZE];
 	my_templ_type bias[OUT_SIZE];
 
@@ -935,13 +937,13 @@ template<int IN_SIZE, int OUT_SIZE> inline void fully_connected_template(
 	 * Súlyok betöltése.
 	 */
 	if(template_load == 1){
-		weight_temp = weight.read();
 		for(int o = 0; o<OUT_SIZE;o++){
 			for(int i =0;i<IN_SIZE;i++){
-				weights[i][o]=weight_temp;
+				weights[i][o]=weight_in.read();
 			}
-			bias[o] = weight_temp;
+			bias[o] = weight_in.read();
 		}
+		weight_out.write(weight_in.read());
 	}
 	// Minden kimenetre ad valami értéket.
 	for(int o = 0; o<OUT_SIZE;o++){

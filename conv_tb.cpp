@@ -50,11 +50,12 @@
 #include <fstream>
 #include <sstream>
 #include <string>
+#include <stdexcept>
 //#include <typeinfo>
 
 using namespace hls;
 
-uint32_t reverseBits(uint32_t n) {
+int reverseBits(int n) {
 //        n = (n >> 1) & 0x55555555 | (n << 1) & 0xaaaaaaaa;
 //        n = (n >> 2) & 0x33333333 | (n << 2) & 0xcccccccc;
 //        n = (n >> 4) & 0x0f0f0f0f | (n << 4) & 0xf0f0f0f0;
@@ -69,7 +70,8 @@ int main(){
 	hls::stream< ap_uint<sizeof(my_data_type)*8> > output;
 	hls::stream<my_templ_type> templ;
 
-	const char *image_path = "/home/kotfu/Downloads/t10k-images.idx3-ubyte";
+	const char *image_path = "/home/kotfu/BSCThesis/data/t10k-images.idx3-ubyte";
+	const char *label_path = "/home/kotfu/BSCThesis/data/t10k-labels.idx1-ubyte";
 	const char *weight_path = "/home/kotfu/BSCThesis/Weights/weight_array.wgt";
 
 	printf("Reading weights from %s\n",weight_path);
@@ -99,22 +101,25 @@ int main(){
 	if(in_image.is_open()){
 
 		unsigned char value;
-		uint32_t magic;
-		uint32_t counter;
-		uint32_t width;
-		uint32_t height;
+		int magic;
+		int counter;
+		int width;
+		int height;
 
-		in_image.read((char*)&magic,sizeof(uint32_t));
+		in_image.read((char*)&magic,sizeof(magic));
 		magic = reverseBits(magic);
-		in_image.read((char*)&counter,sizeof(uint32_t));
+//		printf("Magic: %d\n",magic);
+		if(magic != 2051) throw std::runtime_error("Invalid MNIST image file!");
+		in_image.read((char*)&counter,sizeof(counter));
 		counter = reverseBits(counter);
-		in_image.read((char*)&height,sizeof(uint32_t));
+		in_image.read((char*)&height,sizeof(height));
 		height = reverseBits(height);
-		in_image.read((char*)&width,sizeof(uint32_t));
+		in_image.read((char*)&width,sizeof(width));
 		width = reverseBits(width);
 
 		for(int w=0; w<width;w++){
-			for(int h=0; h<width;h++){
+			for(int h=0; h<8;h++){
+
 				in_image.read((char*)&value,sizeof(unsigned char));
 
 				input.write(value);
@@ -125,6 +130,32 @@ int main(){
 		}
 	}
 
+	printf("Reading labels from %s\n",label_path);
+	std::ifstream in_labels(label_path);
+	printf("Label file %s\n",in_labels.is_open() ? " is opened" : "failed to open");
+
+	unsigned int label;
+	if(in_labels.is_open()){
+
+		int magic;
+		int counter;
+
+		in_labels.read((char*)&magic,sizeof(magic));
+		magic = reverseBits(magic);
+		if(magic != 2049) throw std::runtime_error("Invalid MNIST label file!");
+		in_labels.read((char*)&counter,sizeof(counter));
+		counter = reverseBits(counter);
+
+//		for(int w=0; w<10;w++){
+//		in_labels.read((char*)&value,sizeof(unsigned char));
+			in_labels >> label;
+//			printf("Readed value %d\n", label);
+//		}
+	}
+
 	mnistNet(input,output,templ, t_load);
+	int out = output.read();
+	printf("Predicted: %d\tActual: %d\n", out,label);
+
 	return 0;
 }
