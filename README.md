@@ -11,7 +11,11 @@ I started the work with the fully connected layer implementation.
 * testdata 10000 datapoint
 * validation data 5000 point
 
-TODO
-- [ ] TestBranch
+### TODO
+- [*] TestBranch
 - [ ] Fully Connected bitenként adja ki az eredményt
 - [ ] Sythesis
+
+### Questions
+- [ ] SegFault valahol a kódba. Conv_net sum[0] = weight\*input
+- [ ] Conv_templ végén address = 0 ha IN_WIDTH-3???
