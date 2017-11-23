@@ -18,13 +18,16 @@ I started the work with the fully connected layer implementation.
 - [ ] Sythesis
 - [ ] Implemetácio
 - [ ] Apa: "Tensorflow" ezt kis- vagy nagy betűvel kell írni? Már magam sem tudom. Végig kellene menni a szövegen és egységesíteni!
+- [ ] max pool 7x7 re tesztelni.
+- [x] Súlyokat összeszámolni. Nincs elég.
 
 ### Questions
 - [x] SegFault valahol a kódba. Conv_net sum[0] = weight\*input
 - [x] Conv\_templ végén address = 0 ha IN\_WIDTH-3??? IN\_WIDTH-TEMPLATE\_Size
 - [x] Address új sorban nem jó(?) értékekkel dolgozik ???
-- [ ] Az MNIST MSB LSB problémája mennyire okoz gondot.
-- [ ] Tensorflow nem ugyan azt húzza be ???
-- [ ] Ellenőrizzük a weight forward logikát...
-- [ ] float reading cpp, float tárolás python, tensorflow, numpy
-- [ ] már az első stream nem kap elég súlyt... ??? van 98 000 súly abból kivesz 3*3*32+32-t utána 200-at kellene streamelnie. Ez még mindig nem 90 000. Mégis elszáll, hogy nincs elég.
+- [x] Az MNIST MSB LSB problémája mennyire okoz gondot.
+- [x] Tensorflow nem ugyan azt húzza be ???
+- [x] Ellenőrizzük a weight forward logikát...
+- [x] float reading cpp, float tárolás python, tensorflow, numpy
+- [x] már az első stream nem kap elég súlyt... ??? van 98 000 súly abból kivesz 3*3*32+32-t utána 200-at kellene streamelnie. Ez még mindig nem 90 000. Mégis elszáll, hogy nincs elég.
+- [ ] pool memória használatában átírtam "h"-t "o"-ra. jó?
