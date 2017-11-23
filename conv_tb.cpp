@@ -51,7 +51,10 @@
 #include <sstream>
 #include <string>
 #include <stdexcept>
+#include <string>
 //#include <typeinfo>
+
+#define TEST_COUNT 2
 
 using namespace hls;
 
@@ -64,98 +67,127 @@ int reverseBits(int n) {
         return n;
 }
 
+template <typename T> inline T ToNumber(const std::string& text)
+{
+	std::stringstream ss(text);
+	T result;
+	ss >> result;
+	return result;
+}
+
 int main(){
 
-	hls::stream< ap_uint<sizeof(my_data_type)*8> > input;
-	hls::stream< ap_uint<sizeof(my_data_type)*8> > output;
-	hls::stream<my_templ_type> templ;
+	hls::stream< ap_uint<sizeof(my_data_type)*8> > input("image_input");
+	int output;
+	hls::stream<My_Temlpate_Struct> templ("template_input");
 
 	const char *image_path = "/home/kotfu/BSCThesis/data/t10k-images.idx3-ubyte";
 	const char *label_path = "/home/kotfu/BSCThesis/data/t10k-labels.idx1-ubyte";
-	const char *weight_path = "/home/kotfu/BSCThesis/Weights/weight_array.wgt";
+	const char *weight_path = "/home/kotfu/BSCThesis/Weights/test_weights.wgt";
 
 	printf("Reading weights from %s\n",weight_path);
 	std::ifstream in_weights(weight_path);
-	printf("Weights file %s\n", in_weights.is_open() ? "is opened" : "failed to open");
+	if(!in_weights.is_open()) throw std::runtime_error("Weights file failed to open");
 
 	bool t_load = true;
-	for(std::string line; std::getline(in_weights, line); ){
-		std::istringstream in(line);
+//	int i=0;
+	for(std::string line; std::getline(in_weights, line);){
+//		std::istringstream in(line);
 
-		float weight;
-		in >> weight;
 
-		templ.write(weight);
+		float temp_weight;
+
+		std::sscanf( line.c_str(), "%f", &temp_weight );
+
+		My_Temlpate_Struct load;
+		load.weight = temp_weight*(1 << 15);
+		load.last = 0;
+
+//		printf("Weight: %f, struct_weight: %d\n",temp_weight,load.weight);
+
+		templ.write(load);
 //		printf("type: %s, value: %f\n", typeid(weight).name(),weight);
 
 	}
-	printf("Weights loaded\n");
+
+	My_Temlpate_Struct load;
+	load.weight = 0;
+	load.last = 1;
+	templ.write(load);
+//	printf("%d Weight loaded\n", i);
 
 
 
 	printf("Reading image from %s\n", image_path);
 	std::ifstream in_image(image_path);
-	printf("Image file %s\n",in_image.is_open() ? " is opened" : "failed to open");
+	if(!in_image.is_open()) throw std::runtime_error("Image file failed to open");
 
-	t_load = false;
-	if(in_image.is_open()){
+	int magic;
+	in_image.read((char*)&magic,sizeof(magic));
+	magic = reverseBits(magic);
+	if(magic != 2051) throw std::runtime_error("Invalid MNIST image file!");
 
-		unsigned char value;
-		int magic;
-		int counter;
-		int width;
-		int height;
+	int image_counter;
+	in_image.read((char*)&image_counter,sizeof(image_counter));
+	image_counter = reverseBits(image_counter);
 
-		in_image.read((char*)&magic,sizeof(magic));
-		magic = reverseBits(magic);
-//		printf("Magic: %d\n",magic);
-		if(magic != 2051) throw std::runtime_error("Invalid MNIST image file!");
-		in_image.read((char*)&counter,sizeof(counter));
-		counter = reverseBits(counter);
-		in_image.read((char*)&height,sizeof(height));
-		height = reverseBits(height);
-		in_image.read((char*)&width,sizeof(width));
-		width = reverseBits(width);
+	int height;
+	in_image.read((char*)&height,sizeof(height));
+	height = reverseBits(height);
 
-		for(int w=0; w<width;w++){
-			for(int h=0; h<8;h++){
+	int width;
+	in_image.read((char*)&width,sizeof(width));
+	width = reverseBits(width);
 
-				in_image.read((char*)&value,sizeof(unsigned char));
 
-				input.write(value);
-
-//				printf("Readed value: %X\n",value);
-
-			}
+	unsigned char value;
+	for(int w=0; w<width;w++){
+		for(int h=0; h<height;h++){
+			in_image >> value;
+			input.write(value);
 		}
 	}
 
 	printf("Reading labels from %s\n",label_path);
 	std::ifstream in_labels(label_path);
-	printf("Label file %s\n",in_labels.is_open() ? " is opened" : "failed to open");
+	if(!in_labels.is_open()) throw std::runtime_error("Label file failed to open");
 
-	unsigned int label;
-	if(in_labels.is_open()){
+	in_labels.read((char*)&magic,sizeof(magic));
+	magic = reverseBits(magic);
+	if(magic != 2049) throw std::runtime_error("Invalid MNIST label file!");
 
-		int magic;
-		int counter;
+	int label_counter;
+	in_labels.read((char*)&label_counter,sizeof(label_counter));
+	label_counter = reverseBits(label_counter);
 
-		in_labels.read((char*)&magic,sizeof(magic));
-		magic = reverseBits(magic);
-		if(magic != 2049) throw std::runtime_error("Invalid MNIST label file!");
-		in_labels.read((char*)&counter,sizeof(counter));
-		counter = reverseBits(counter);
+	unsigned char label;
+	in_labels >> label;
 
-//		for(int w=0; w<10;w++){
-//		in_labels.read((char*)&value,sizeof(unsigned char));
-			in_labels >> label;
-//			printf("Readed value %d\n", label);
+	convol(input,output,templ, t_load);
+//	pooling(input,output,templ, t_load);
+//	mnistNet(input,output,templ, t_load);
+//	printf("Predicted: %d\tActual: %d\n", output, label);
+
+	t_load = false;
+
+//	for(int run=0;run<TEST_COUNT; run++){
+//		for(int w=0; w<width;w++){
+//			for(int h=0; h<height;h++){
+//
+//				in_image >> value;
+//				input.write(value);
+//
+////				printf("Readed value: %X\n",value);
+//
+//			}
 //		}
-	}
-
-	mnistNet(input,output,templ, t_load);
-	int out = output.read();
-	printf("Predicted: %d\tActual: %d\n", out,label);
+//
+//		in_labels >> label;
+//
+//		mnistNet(input,output,templ, t_load);
+//
+//		printf("Predicted: %d\tActual: %d\n", output, label);
+//	}
 
 	return 0;
 }

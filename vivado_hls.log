@@ -1,5 +1,5 @@
 INFO: [HLS 200-10] Running '/opt/Xilinx/Vivado_HLS/2016.4/bin/unwrapped/lnx64.o/vivado_hls'
-INFO: [HLS 200-10] For user 'kotfu' on host 'VLSI-01' (Linux_x86_64 version 3.16.0-77-generic) on Tue Nov 21 17:45:32 CET 2017
+INFO: [HLS 200-10] For user 'kotfu' on host 'VLSI-01' (Linux_x86_64 version 3.16.0-77-generic) on Thu Nov 23 20:08:44 CET 2017
 INFO: [HLS 200-10] On os Ubuntu 14.04.5 LTS
 INFO: [HLS 200-10] In directory '/home/kotfu/BSCThesis'
 INFO: [HLS 200-10] Opening project '/home/kotfu/BSCThesis/Conv_net'.
@@ -8,7 +8,6 @@ INFO: [SYN 201-201] Setting up clock 'default' with a period of 10ns.
 INFO: [HLS 200-10] Setting target device to 'xc7z020clg484-1'
 INFO: [SIM 211-2] *************** CSIM start ***************
 INFO: [SIM 211-4] CSIM will launch GCC as the compiler.
-   Compiling ../../../../conv_tb.cpp in debug mode
    Compiling ../../../../conv.cpp in debug mode
    Generating csim.exe
 INFO: [SIM 211-1] CSim file generation done with 0 errors.
