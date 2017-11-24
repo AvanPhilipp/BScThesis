@@ -105,6 +105,12 @@ void pooling(
 		int &output,
 		stream<My_Temlpate_Struct> &templ,
 		int tload);
+
+void conv_pool(
+		hls::stream< ap_uint< sizeof(my_data_type)*8> > &input,
+		int &output,
+		stream<My_Temlpate_Struct> &templ,
+		int tload);
 //void VGGNet(
 //		hls::stream< ap_uint< 1*sizeof(my_data_type)*8> > &input,
 //		hls::stream< ap_uint< 1000*sizeof(my_data_type)*8> > &output,
@@ -640,20 +646,13 @@ template<int IN_WIDTH, int IN_HEIGHT, int IN_DEPTH, int TEMPLATE_SIZE, int OUT_D
 		}
 		bool exit = false;
 		while(!exit){
+			if(templ_in.empty()) break;
 			My_Temlpate_Struct temp = templ_in.read();
 			templ_out.write(temp);
 			if(temp.last) {
 				exit = true;
 			}
 		}
-
-//		for(int w=0;w<200000;w++){
-//			temp = templ_in.read();
-//			templ_out.write(temp);
-//			if(temp.last) {
-//				break;
-//			}
-//		}
 	}
 
 
@@ -690,7 +689,6 @@ template<int IN_WIDTH, int IN_HEIGHT, int IN_DEPTH, int TEMPLATE_SIZE, int OUT_D
 					for(int h=0;h<IN_DEPTH;h++){
 						image_register[h]=input_tmp((h+1)*sizeof(my_data_type)*8-1,h*sizeof(my_data_type)*8);
 					}
-
 				}
 
 
@@ -727,13 +725,15 @@ template<int IN_WIDTH, int IN_HEIGHT, int IN_DEPTH, int TEMPLATE_SIZE, int OUT_D
 							ap_int<16> tmp_image = image[read_address][th][h];
 							ap_int<16> tmp_weight = weigts[tw][th][h][o];
 
-							if(tw == 0 and th == 0 and h==0)
+							if(tw == 0 and th == 0 and h==0){
 								/**
 								 * A bias az accumlator kezdeti értéke.
 								 */
-								sum[o] = bias[o] + tmp_image * tmp_weight;
-							else
+								sum[o] = (bias[o] >> 15) + tmp_image * tmp_weight;
+							}
+							else {
 								sum[o] += tmp_image * tmp_weight;
+							}
 						}
 					}
 
@@ -764,13 +764,16 @@ template<int IN_WIDTH, int IN_HEIGHT, int IN_DEPTH, int TEMPLATE_SIZE, int OUT_D
 					}
 				}
 
-				output.write(output_tmp);
 
 				/**
 				 * A blokkramban egyel arrébb lépünk.
 				 * Ez a tempalte következő oszlopát jelenti.
 				 */
 				read_address++;
+
+				if(read_address-address == TEMPLATE_SIZE){
+					output.write(output_tmp);
+				}
 
 
 				/**
@@ -779,7 +782,7 @@ template<int IN_WIDTH, int IN_HEIGHT, int IN_DEPTH, int TEMPLATE_SIZE, int OUT_D
 				 * A végleges megvalósításban itt a lépés méretét kell majd állíthatóvá tenni.
 				 */
 				if(tw == TEMPLATE_SIZE-1){
-					if(address == IN_WIDTH-TEMPLATE_SIZE){ //((TEMPLATE_SIZE-1)/2) //= 3
+					if(address == IN_WIDTH-TEMPLATE_SIZE){
 						address = 0;
 					}
 					else{
@@ -850,32 +853,35 @@ template<int IN_WIDTH, int IN_HEIGHT, int IN_DEPTH, int POOL_SIZE>inline void po
 //		hls::stream< My_Temlpate_Struct > &weight_out,
 //		int template_load
 {
-	my_data_type memory[IN_WIDTH/POOL_SIZE][IN_DEPTH];
+	int memory_width=(IN_WIDTH+POOL_SIZE-1)/POOL_SIZE;
+	my_data_type memory[memory_width][IN_DEPTH];
 	ap_uint< IN_DEPTH*sizeof(my_data_type)*8> input_tmp;
 	my_data_type image_register[IN_DEPTH];
 
-//	if(IN_WIDTH%2!=0){
-//		printf("almafa");
-//	}
+	int pixel_count;
 
 	/*
 	 * A memória melyik helyére írunk.
 	 */
 	int address=0;
+	int pool_width_counter = 0;
+	int pool_height_counter = 0;
 	/*
 	 * A teljes bemenet bejárása.
 	 */
-	for(int w=0;w<IN_WIDTH;w++){
-		for(int h=0;h<IN_HEIGHT;h++){
-
+	for(int h=0;h<IN_HEIGHT;h++){
+		for(int w=0;w<IN_WIDTH;w++){
 			input_tmp = input.read();
-			for(int o=0;o<IN_DEPTH;o++){
+			for(int i=0;i<IN_DEPTH;i++){
+
 				//Pipeline miatt itt jó?
+//				if(i==0)
+
 				/**
 				 * ap_uint-ből tömbbe olvassuk az adatokat.
 				 */
-				image_register[o]=input_tmp((o+1)*sizeof(my_data_type)*8-1,o*sizeof(my_data_type)*8);
-				if(w%POOL_SIZE==0){
+				image_register[i]=input_tmp((i+1)*sizeof(my_data_type)*8-1,i*sizeof(my_data_type)*8);
+				if(pool_width_counter==0){
 					/**
 					 * Amennyiben az első sor első oszlopában vagyunk a maximum érték 0.
 					 * A memóriába 0 beírása helyett az addigi memória tartalmat felülírjuk az új értékkel.
@@ -883,16 +889,21 @@ template<int IN_WIDTH, int IN_HEIGHT, int IN_DEPTH, int POOL_SIZE>inline void po
 					 * Amennyiben az nagyobb mint 0 a következő lépésben amúgy is felülírtuk volna ezzel az értékkel.
 					 * Kisebb nem lehet a beépített relu réteg miatt.
 					 */
-					if(h%POOL_SIZE==0){
-						memory[address][o] =image_register[o];
+					if(pool_height_counter==0){
+						memory[address][i] =image_register[i];
+					}
+					else{
+						if(image_register[i] > memory[address][i]){
+							memory[address][i] = image_register[i];
+						}
 					}
 				}
 				/**
 				 * Minden más esetben ha nagyobb felülírjuk ha nem akkor meghagyjuk.
 				 */
 				else {
-					if(image_register[o] > memory[address][o]){
-						memory[address][o] = image_register[o];
+					if(image_register[i] > memory[address][i]){
+						memory[address][i] = image_register[i];
 					}
 				}
 
@@ -904,24 +915,41 @@ template<int IN_WIDTH, int IN_HEIGHT, int IN_DEPTH, int POOL_SIZE>inline void po
 				 * Ez így csak az egymás mellett lévő pool rétegekre működik. a sorok miatt.
 				 * 		Ha egy sor nem változtatja az előző sor értékét annaka a sornaka
 				 */
-
-
-				if(h%POOL_SIZE == POOL_SIZE-1 && h%POOL_SIZE == POOL_SIZE-1){
+				if((pool_width_counter == POOL_SIZE-1 || w==IN_WIDTH-1)
+						&& (pool_height_counter == POOL_SIZE-1 || h == IN_HEIGHT-1) ){
 					ap_uint<IN_DEPTH*sizeof(my_data_type)*8> output_tmp;
-					for(int h=0;h<IN_DEPTH;h++){
-						output_tmp((h+1)*sizeof(my_data_type)*8-1,h*sizeof(my_data_type)*8)=memory[address][h];
+//					for(int h=0;h<IN_DEPTH;h++){
+					output_tmp((i+1)*sizeof(my_data_type)*8-1,i*sizeof(my_data_type)*8)=memory[address][i];
+//					}
+					if(i==IN_DEPTH-1){
+//						printf("prints to: %d, while pos: %d:%d\n",address,w,h);
+						output.write(output_tmp);
 					}
-					output.write(output_tmp);
 				}
+
 
 				/**
 				 * A memóriacímet egyel növeljük.
 				 * Így minden pixelt bejárunk és minden oszlop bele lesz számolva a maximumba.
 				 * Az eltolást a POOL_SIZE-onkénti kiírással érjük el.
 				 */
-				address++;
-				if(address == IN_WIDTH/POOL_SIZE){
-					address = 0;
+				if(i==IN_DEPTH-1){
+					pool_width_counter++;
+					if(pool_width_counter==POOL_SIZE){
+						pool_width_counter=0;
+						address++;
+					}
+					if(w==IN_WIDTH-1){
+						pool_width_counter=0;
+						address = 0;
+						pool_height_counter++;
+					}
+					if(pool_height_counter==POOL_SIZE){
+						pool_height_counter=0;
+					}
+					if(address == memory_width){
+						address = 0;
+					}
 				}
 			}
 		}
@@ -989,92 +1017,105 @@ template<int IN_WIDTH, int IN_HEIGHT, int IN_DEPTH, int OUT_SIZE> inline void fu
 		hls::stream< My_Temlpate_Struct > &weight_out,
 		int template_load)
 {
-	my_templ_type weights[IN_WIDTH*IN_HEIGHT*IN_DEPTH][OUT_SIZE];
+	int IN_SIZE = IN_WIDTH*IN_HEIGHT;
+	my_templ_type weights[IN_SIZE][IN_DEPTH][OUT_SIZE];
 	my_templ_type bias[OUT_SIZE];
 	my_data_type input_register[IN_DEPTH];
 	ap_uint<IN_DEPTH*sizeof(my_data_type)*8> input_tmp;
+	my_data_type temp_out;
+	ap_uint< OUT_SIZE*sizeof(my_data_type)*8> out_register;
+
+	ap_int<16> tmp_input;
+	ap_int<16> tmp_weight;
 
 	/*
 	 * Súlyok betöltése.
 	 */
 	if(template_load == 1){
-		for(int o = 0; o<OUT_SIZE;o++){
-			for(int i =0;i<IN_WIDTH*IN_HEIGHT*IN_DEPTH;i++){
-				My_Temlpate_Struct temp = weight_in.read();
-				if(temp.last == 0) weights[i][o]=temp.weight;
+
+		for(int i =0;i<IN_SIZE;i++){
+			for(int h=0; h<IN_DEPTH;h++){
+				for(int o = 0; o<OUT_SIZE;o++){
+					My_Temlpate_Struct temp = weight_in.read();
+					if(temp.last == 0) weights[i][h][o]=temp.weight;
+				}
 			}
+		}
+		for(int o = 0; o<OUT_SIZE;o++){
 			My_Temlpate_Struct temp = weight_in.read();
 			if(temp.last == 0) bias[o] = temp.weight;
 		}
 		bool exit = false;
 		while(!exit){
+			if(weight_in.empty()) break;
 			My_Temlpate_Struct temp = weight_in.read();
 			weight_out.write(temp);
-			if(temp.last == 1) {
-				exit = true;
-			}
+			if(temp.last == 1) exit = true;
 		}
-//		for(int w=0;w<200;w++){
-//			My_Temlpate_Struct temp = weight_in.read();
-//			weight_out.write(temp);
-//			if(temp.last == 1) break;
-//		}
 	}
-	// Minden kimenetre ad valami értéket.
 
-	my_data_type temp_out;
-	for(int o = 0; o<OUT_SIZE;o++){
+	for (int i=0; i<IN_SIZE; i++) {
+		input_tmp = input.read();
+		for (int h = 0; h < IN_DEPTH; h++) {
+			input_register[h] = input_tmp((h+1)*sizeof(my_data_type)*8-1,h*sizeof(my_data_type)*8);
+			for(int o=0;o<OUT_SIZE;o++){
 
-		// Minden neuronnak minden bemenetén végigmegy
-		for(int i =0;i<IN_WIDTH*IN_HEIGHT;i++){
+				tmp_input = input_register[h];
+				tmp_weight = weights[i][h][o];
 
-			input_tmp = input.read();
-			for(int h=0;h<IN_DEPTH;h++){
-
-				input_register[h]=input_tmp((h+1)*sizeof(my_data_type)*8-1,h*sizeof(my_data_type)*8);
-
-				if(i==0 && o == 0){
-					temp_out = bias[o] +input_register[i] *weights[i][o];
+				if (i == 0 && o == 0) {
+					temp_out = (bias[o] >> 15) + tmp_input * tmp_weight;
+//					temp_out = bias[o] + tmp_input * tmp_weight;
+				} else {
+					temp_out += tmp_input * tmp_weight;
 				}
-				else{
-					temp_out += input_register[i]*weights[i][o];
+				out_register((o+1)*sizeof(my_data_type)*8-1,o*sizeof(my_data_type)*8) = (temp_out >> 15);
+//				out_register((o+1)*sizeof(my_data_type)*8-1,o*sizeof(my_data_type)*8) = temp_out;
+
+				if(i == IN_SIZE-1 && o==OUT_SIZE-1 && h==IN_DEPTH-1){
+					output.write(out_register);
 				}
 			}
 		}
-		output.write(temp_out);
 	}
 }
 
 /**
  * ReLu réteg a nagyobb modulatitás elérés érdekében... (jobban megértettem a működést.)
  */
-template<int SIZE> inline void relu_template(
-	hls::stream< ap_uint< SIZE*sizeof(my_data_type)*8>  > &input,
-	hls::stream< ap_uint< SIZE*sizeof(my_data_type)*8>  > &output)
-{
-	FOR_INPUTS : for(int i =0;i<SIZE;i++){
-		my_data_type temp = input.read();
-		if(temp < 0){
-			output.write(0);
-		}
-		else{
-			output.write(temp);
-		}
-	}
-}
+//template<int SIZE> inline void relu_template(
+//	hls::stream< ap_uint< SIZE*sizeof(my_data_type)*8>  > &input,
+//	hls::stream< ap_uint< SIZE*sizeof(my_data_type)*8>  > &output)
+//{
+//	FOR_INPUTS : for(int i =0;i<SIZE;i++){
+//
+//		my_data_type temp = input.read();
+//		if(temp < 0){
+//			output.write(0);
+//		}
+//		else{
+//			output.write(temp);
+//		}
+//	}
+//}
 
 template<int SIZE> inline void max(
-	hls::stream< ap_uint< SIZE*sizeof(my_data_type)*8>  > &input,
-	int &output){
-
+	hls::stream< ap_uint< SIZE*sizeof(my_data_type)*8> > &input,
+	int &output)
+{
 	int max_index = -1;
-	my_data_type max = 0;
+	my_data_type max = -10000;
+	ap_uint< SIZE*sizeof(my_data_type)*8> temp;
+	my_data_type in_register;
+	in_register = input.read();
+	for(int i=0;i<SIZE;i++){
 
-	for(int i =0;i<SIZE;i++){
-		my_data_type temp = input.read();
-		if(temp > max){
+		in_register =temp((i+1)*sizeof(my_data_type)*8-1,i*sizeof(my_data_type)*8);
+
+//		printf("(%d,%d)\n", i, in_register);
+		if(in_register > max){
 			max_index = i;
-			max = temp;
+			max = in_register;
 		}
 	}
 	output = max_index;

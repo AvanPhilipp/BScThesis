@@ -43,18 +43,19 @@
 //}
 
 
-#include <iostream>
 #include "conv.h"
-#include <opencv2/core/core.hpp>
-#include <opencv2/highgui/highgui.hpp>
+
+//#include <opencv2/core/core.hpp>
+//#include <opencv2/highgui/highgui.hpp>
+
+#include <iostream>
 #include <fstream>
 #include <sstream>
-#include <string>
 #include <stdexcept>
 #include <string>
 //#include <typeinfo>
 
-#define TEST_COUNT 2
+#define TEST_COUNT 10
 
 using namespace hls;
 
@@ -106,6 +107,7 @@ int main(){
 //		printf("Weight: %f, struct_weight: %d\n",temp_weight,load.weight);
 
 		templ.write(load);
+
 //		printf("type: %s, value: %f\n", typeid(weight).name(),weight);
 
 	}
@@ -117,6 +119,10 @@ int main(){
 //	printf("%d Weight loaded\n", i);
 
 
+
+	/**
+	 * Reading MNIST Image
+	 */
 
 	printf("Reading image from %s\n", image_path);
 	std::ifstream in_image(image_path);
@@ -148,6 +154,10 @@ int main(){
 		}
 	}
 
+	/**
+	 * Reading Labels
+	 */
+
 	printf("Reading labels from %s\n",label_path);
 	std::ifstream in_labels(label_path);
 	if(!in_labels.is_open()) throw std::runtime_error("Label file failed to open");
@@ -163,31 +173,32 @@ int main(){
 	unsigned char label;
 	in_labels >> label;
 
-	convol(input,output,templ, t_load);
+//	convol(input,output,templ, t_load);
 //	pooling(input,output,templ, t_load);
-//	mnistNet(input,output,templ, t_load);
-//	printf("Predicted: %d\tActual: %d\n", output, label);
+//	conv_pool(input,output,templ, t_load);
+	mnistNet(input,output,templ, t_load);
+	printf("Predicted: %d\tActual: %d\n", output, label);
 
 	t_load = false;
 
-//	for(int run=0;run<TEST_COUNT; run++){
-//		for(int w=0; w<width;w++){
-//			for(int h=0; h<height;h++){
-//
-//				in_image >> value;
-//				input.write(value);
-//
-////				printf("Readed value: %X\n",value);
-//
-//			}
-//		}
-//
-//		in_labels >> label;
-//
-//		mnistNet(input,output,templ, t_load);
-//
-//		printf("Predicted: %d\tActual: %d\n", output, label);
-//	}
+	for(int run=0;run<TEST_COUNT; run++){
+		for(int w=0; w<width;w++){
+			for(int h=0; h<height;h++){
+
+				in_image >> value;
+				input.write(value);
+
+//				printf("Readed value: %X\n",value);
+
+			}
+		}
+
+		in_labels >> label;
+
+		mnistNet(input,output,templ, t_load);
+
+		printf("Predicted: %d\tActual: %d\n", output, label);
+	}
 
 	return 0;
 }
