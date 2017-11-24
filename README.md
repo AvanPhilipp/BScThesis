@@ -20,6 +20,7 @@ I started the work with the fully connected layer implementation.
 - [ ] Apa: "Tensorflow" ezt kis- vagy nagy betűvel kell írni? Már magam sem tudom. Végig kellene menni a szövegen és egységesíteni!
 - [ ] max pool 7x7 re tesztelni.
 - [x] Súlyokat összeszámolni. Nincs elég.
+- [ ] max függvény nem kap értelmes értékeket. FC réteget átnézni!!!
 
 ### Questions
 - [x] SegFault valahol a kódba. Conv_net sum[0] = weight\*input
