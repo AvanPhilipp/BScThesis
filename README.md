@@ -18,10 +18,11 @@ I started the work with the fully connected layer implementation.
 - [ ] Sythesis
 - [ ] Implemetácio
 - [ ] Apa: "Tensorflow" ezt kis- vagy nagy betűvel kell írni? Már magam sem tudom. Végig kellene menni a szövegen és egységesíteni!
-- [ ] max pool 7x7 re tesztelni.
+- [x] max pool 7x7 re tesztelni.
 - [x] Súlyokat összeszámolni. Nincs elég.
 - [ ] max függvény nem kap értelmes értékeket. FC réteget átnézni!!!
-
+- [ ] int, float, 16, 32 bit a conv és az FC szorzásában!!! tisztázni!!!
+ 
 ### Questions
 - [x] SegFault valahol a kódba. Conv_net sum[0] = weight\*input
 - [x] Conv\_templ végén address = 0 ha IN\_WIDTH-3??? IN\_WIDTH-TEMPLATE\_Size
@@ -31,4 +32,4 @@ I started the work with the fully connected layer implementation.
 - [x] Ellenőrizzük a weight forward logikát...
 - [x] float reading cpp, float tárolás python, tensorflow, numpy
 - [x] már az első stream nem kap elég súlyt... ??? van 98 000 súly abból kivesz 3*3*32+32-t utána 200-at kellene streamelnie. Ez még mindig nem 90 000. Mégis elszáll, hogy nincs elég.
-- [ ] pool memória használatában átírtam "h"-t "o"-ra. jó?
+- [x] pool memória használatában átírtam "h"-t "o"-ra. jó?
