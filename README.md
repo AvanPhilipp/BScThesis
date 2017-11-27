@@ -24,6 +24,7 @@ I started the work with the fully connected layer implementation.
 - [ ] int, float, 16, 32 bit a conv és az FC szorzásában!!! tisztázni!!!
 - [ ] %V: a bias legyen konzisztensen kis vagy nagy kezdőbetűvel
 - [ ] %V: FC előtt hol a, hol az névelőt használsz
+- [ ] %V: top levelt nagy vagy kisbetűvel írod? mindenhol ugyanúgy legyen
  
 ### Questions
 - [x] SegFault valahol a kódba. Conv_net sum[0] = weight\*input
